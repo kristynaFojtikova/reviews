@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "restaurants-review-rn-app",
+    "slug": "restaurants-review-rn-app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "restaurants-review-rn-app"
+}

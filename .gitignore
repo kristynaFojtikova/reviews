@@ -48,6 +48,7 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+/restaurants-review-rn-app/ios/Pods/
 
 # Expo
 .expo/
