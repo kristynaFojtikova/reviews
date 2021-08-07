@@ -1,24 +1,25 @@
-
-const createRestaurant = require('./createRestaurant');
-const deleteRestaurant = require('./deleteRestaurant');
-const editRestaurant = require('./editRestaurant');
-const restaurants = require('./restaurants');
+const createRestaurant = require("./createRestaurant");
+const deleteRestaurant = require("./deleteRestaurant");
+const editRestaurant = require("./editRestaurant");
+const restaurant = require("./restaurant");
+const restaurants = require("./restaurants");
 
 const resolvers = {
-    Restaurant: {
-        async reviews(restaurant) {
-            console.log("rest", restaurant)
-            return restaurant.getReviews();
-        },
+  Restaurant: {
+    async reviews(restaurant) {
+      console.log("rest", restaurant);
+      return restaurant.getReviews();
     },
-    Query: {
-        restaurants
-    },
-    Mutation: {
-        createRestaurant,
-        editRestaurant,
-        deleteRestaurant
-    }
+  },
+  Query: {
+    restaurants,
+    restaurant,
+  },
+  Mutation: {
+    createRestaurant,
+    editRestaurant,
+    deleteRestaurant,
+  },
 };
 
-module.exports = resolvers
+module.exports = resolvers;

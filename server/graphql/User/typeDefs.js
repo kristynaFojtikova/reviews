@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql } = require("apollo-server");
 const typeDefs = gql`
   # User Definition
   enum UserRole {
@@ -11,12 +11,14 @@ const typeDefs = gql`
     email: String!
     role: UserRole!
     password: String!
+    id: ID!
   }
-  
+
   type Owner implements User {
     email: String!
     role: UserRole!
     password: String!
+    id: ID!
     # restaurants: [Restaurant!]
   }
 
@@ -24,25 +26,27 @@ const typeDefs = gql`
     email: String!
     role: UserRole!
     password: String!
+    id: ID!
   }
 
   type Customer implements User {
     email: String!
     role: UserRole!
     password: String!
+    id: ID!
   }
 
   # Input
 
   input RegisterInput {
-      email: String!
-      role: UserRole!
-      password: String!
+    email: String!
+    role: UserRole!
+    password: String!
   }
 
   input LoginInput {
-      email: String!
-      password: String!
+    email: String!
+    password: String!
   }
 
   # Response
@@ -62,8 +66,9 @@ const typeDefs = gql`
 
   extend type Query {
     users: [User]
-  } 
-  
+    user: User
+  }
+
   extend type Mutation {
     login(input: LoginInput!): AuthResponse
     logout(refreshToken: String!): Boolean
@@ -73,4 +78,4 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = typeDefs
+module.exports = typeDefs;

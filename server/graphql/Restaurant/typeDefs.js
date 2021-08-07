@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql } = require("apollo-server");
 
 const typeDefs = gql`
   type Restaurant {
@@ -10,7 +10,8 @@ const typeDefs = gql`
   }
   extend type Query {
     restaurants: [Restaurant!]
-  } 
+    restaurant(id: ID!): Restaurant
+  }
   input CreateRestaurantInput {
     name: String!
     description: String

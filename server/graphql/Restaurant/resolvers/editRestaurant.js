@@ -1,37 +1,37 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
-const validateUser = require('../../util/validateUser');
+const validateUser = require("../../util/validateUser");
 
 const argsSchema = Joi.object({
-    name: Joi.string().required(),
-    description: Joi.string(),
-    id: Joi.number()
-})
+  name: Joi.string().required(),
+  description: [Joi.string().optional(), Joi.allow(null)],
+  id: Joi.number(),
+});
 
 const editRestaurant = async (root, { input }, { models, user }) => {
-    Joi.assert(input, argsSchema)
+  Joi.assert(input, argsSchema);
 
-    const { role, userId } = validateUser(user, /OWNER/g);
+  const { role, userId } = validateUser(user, /OWNER/g);
 
-    const { name, description, id } = input;
+  const { name, description, id } = input;
 
-    const restaurant = await models.Restaurant.findOne({
-        where: {
-            id,
-            ownerId: userId
-        }
-    })
+  const restaurant = await models.Restaurant.findOne({
+    where: {
+      id,
+      ownerId: userId,
+    },
+  });
 
-    if (!restaurant) {
-        throw new Error("Unable to find your restaurant")
-    }
+  if (!restaurant) {
+    throw new Error("Unable to find your restaurant");
+  }
 
-    restaurant.description = description;
-    restaurant.name = name;
+  restaurant.description = description;
+  restaurant.name = name;
 
-    await restaurant.save()
+  await restaurant.save();
 
-    return restaurant;
-}
+  return restaurant;
+};
 
-module.exports = editRestaurant
+module.exports = editRestaurant;
