@@ -6,6 +6,8 @@
 
 `restaurants-review-rn-app` folder in `root` contains the RN app codebase.
 
+`insomnia` folder in `root` contains the json file for Insomnia workspace to test the server.
+
 ## Run & Setup
 
 Navigate to `/server` and run `yarn` and `node index.js` to start the local server.
