@@ -4,17 +4,28 @@ import { Icon } from 'react-native-elements';
 
 import Colors from '../../styles/Colors';
 
-const FormInput = ({ disabled, label, secureTextEntry, value, setValue, error, validate }) => {
+const FormInput = ({
+  disabled,
+  label,
+  secureTextEntry,
+  value,
+  setValue,
+  error,
+  validate,
+  tintColor,
+  placeholder,
+}) => {
   return (
     <View style={disabled ? { ...styles.container, ...styles.disabled } : styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
         editable={!disabled}
         secureTextEntry={secureTextEntry}
-        style={styles.input}
+        style={tintColor ? { ...styles.input, borderBottomColor: tintColor } : styles.input}
         value={value}
         onChangeText={(text) => setValue(text)}
         onEndEditing={validate}
+        placeholder={placeholder}
       />
       {error && (
         <View style={styles.errorContainer}>
@@ -43,11 +54,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 40,
     color: Colors.darkFont,
-    borderBottomColor: Colors.lightGrey,
-    borderBottomWidth: 1,
     justifyContent: 'center',
     textAlignVertical: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightGrey,
   },
+
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -8,22 +8,24 @@ import Button from '../util/Button';
 import LinkButton from '../util/LinkButton';
 import Spacer from '../util/Spacer';
 
-const Form = ({ headerText, submitButtonText, onSubmit, children, loading }) => {
+const Form = ({ headerText, submitButtonText, buttonIcon, onSubmit, children, loading }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{headerText}</Text>
       <Spacer height={30} />
       {children}
       <Spacer />
-      <Button text={submitButtonText} onPress={onSubmit} loading={loading} />
+      <Button text={submitButtonText} onPress={onSubmit} loading={loading} iconName={buttonIcon} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.lightFont,
+    backgroundColor: Colors.whiteAplha,
     padding: 20,
+    margin: 5,
+    borderRadius: 15,
   },
   title: {
     fontSize: 40,

@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 
 import { emailRegex, passwordRegex } from '../util/regex';
 import Form from './form/Form';
-import CheckmarkInput from './form/CheckmarkInput';
 import FormInput from './form/FormInput';
 import Button from './util/Button';
 import LinkButton from './util/LinkButton';
 
-const RegisterForm = ({ onSubmit, loading }) => {
+const LoginForm = ({ onSubmit, loading }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('CUSTOMER');
 
   const [emailError, setEmailError] = useState();
   const [passwordError, setPasswordError] = useState();
@@ -33,10 +31,6 @@ const RegisterForm = ({ onSubmit, loading }) => {
       setPasswordError('Required field');
       return false;
     }
-    if (!passwordRegex.test(password)) {
-      setPasswordError('Make sure to create a strong password!');
-      return false;
-    }
     setPasswordError(null);
     return true;
   };
@@ -53,21 +47,14 @@ const RegisterForm = ({ onSubmit, loading }) => {
       return;
     }
     const lowercasedEmail = email.toLowerCase();
-    onSubmit({ email: lowercasedEmail, password, role });
-  };
-
-  const onToggle = (toggledRole) => {
-    if (role === toggledRole) {
-      setRole('CUSTOMER');
-    } else {
-      setRole(toggledRole);
-    }
+    onSubmit({ email: lowercasedEmail, password });
   };
 
   return (
     <Form
-      headerText="Create an account"
-      submitButtonText="Register"
+      headerText="Welcome!"
+      submitButtonText="Login"
+      buttonIcon="rowing"
       onSubmit={onSubmitPressed}
       loading={loading}
     >
@@ -77,6 +64,7 @@ const RegisterForm = ({ onSubmit, loading }) => {
         setValue={setEmail}
         error={emailError}
         validate={validateEmail}
+        placeholder="customer@grr.la"
       />
       <FormInput
         label={'Password'}
@@ -85,23 +73,35 @@ const RegisterForm = ({ onSubmit, loading }) => {
         setValue={setPassword}
         error={passwordError}
         validate={validatePassword}
+        placeholder="test123"
       />
-      <CheckmarkInput
-        label="I'm an owner"
-        checked={role === 'OWNER'}
-        onToggle={() => {
-          onToggle('OWNER');
-        }}
-      />
-      <CheckmarkInput
-        label="I'm admin"
-        checked={role === 'ADMIN'}
-        onToggle={() => {
-          onToggle('ADMIN');
-        }}
-      />
+      {__DEV__ && (
+        <>
+          <LinkButton
+            text="Dev: prefil to customer"
+            onPress={() => {
+              setEmail('customer@grr.la');
+              setPassword('Test123!');
+            }}
+          />
+          <LinkButton
+            text="Dev: prefil to owner"
+            onPress={() => {
+              setEmail('owner@grr.la');
+              setPassword('test123');
+            }}
+          />
+          <LinkButton
+            text="Dev: prefil to admin"
+            onPress={() => {
+              setEmail('admin@grr.la');
+              setPassword('test123');
+            }}
+          />
+        </>
+      )}
     </Form>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

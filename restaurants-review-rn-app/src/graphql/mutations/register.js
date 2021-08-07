@@ -9,6 +9,7 @@ export default gql`
         user {
           email
           role
+          id
         }
       }
       ... on AuthError {

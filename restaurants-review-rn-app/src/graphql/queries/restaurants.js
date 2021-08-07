@@ -9,6 +9,7 @@ export default gql`
       id
       reviews {
         id
+        reviewerId
         restaurantId
         rating
         userComment

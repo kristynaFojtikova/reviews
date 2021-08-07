@@ -1,16 +1,19 @@
 import React, { useContext, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { StyleSheet, SafeAreaView, Alert, ImageBackground } from 'react-native';
 import { useMutation } from '@apollo/client';
 import { withNavigation } from 'react-navigation';
 
-import RegisterForm from '../components/RegisterForm';
-import register from '../graphql/mutations/register';
+import REGISTER from '../graphql/mutations/REGISTER';
+import UserForm from '../components/UserForm';
 import LinkButton from '../components/util/LinkButton';
 import useAuthContext from '../context/useAuthContext';
+import Spacer from '../components/util/Spacer';
+import SampleImages from '../util/sampleImages';
+import Colors from '../styles/Colors';
 
 const RegisterScreen = ({ navigation }) => {
   const { signin } = useAuthContext();
-  const [performRegistration, { data, loading, error }] = useMutation(register);
+  const [performRegistration, { data, loading, error }] = useMutation(REGISTER);
 
   const onSubmit = ({ email, password, role }) => {
     performRegistration({ variables: { input: { email, password, role } } });
@@ -33,19 +36,20 @@ const RegisterScreen = ({ navigation }) => {
     }
   }, [data, error]);
 
+  const img = SampleImages[16];
+
   return (
-    <SafeAreaView style={styles.container}>
-      <RegisterForm
-        headerText="Register"
-        errorMessage={'state.errorMessage'}
-        onSubmit={onSubmit}
-        submitButtonText="Sign In"
-      />
-      <LinkButton
-        text="Already have an account? Log in"
-        onPress={() => navigation.navigate('Signin')}
-      />
-    </SafeAreaView>
+    <ImageBackground source={img} style={styles.bgImg}>
+      <SafeAreaView style={styles.container}>
+        <UserForm onSubmit={onSubmit} loading={loading} />
+        <Spacer />
+        <LinkButton
+          text="Already have an account? Log in"
+          onPress={() => navigation.navigate('Signin')}
+          color={Colors.lightFont}
+        />
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
@@ -55,6 +59,9 @@ RegisterScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  bgImg: {
     flex: 1,
   },
 });

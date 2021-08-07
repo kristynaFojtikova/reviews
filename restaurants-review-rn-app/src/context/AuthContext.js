@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import createDataContext from './createDataContext';
 import { navigate } from '../util/navigationRef';
+import { clearApolloStore } from '../graphql/client';
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -12,6 +13,8 @@ const authReducer = (state, action) => {
       };
     case 'signout':
       return { accessToken: null, refreshToken: null, user: null };
+    case 'updateUser':
+      return { ...state, user: action.payload };
     default:
       return state;
   }
@@ -24,8 +27,19 @@ const signout = (dispatch) => async () => {
   navigate('authFlow');
 };
 
-const tryLocalSignin = (dispatch) => async () => {
-  //
+const updateUser = (dispatch) => (user) => {
+  const { role } = user;
+  console.log('NAVIGATE', role);
+  switch (role) {
+    case 'CUSTOMER':
+      navigate('customerFlow');
+    case 'OWNER':
+      navigate('ownerFlow');
+    case 'ADMIN':
+      navigate('adminFlow');
+    default:
+  }
+  dispatch({ type: 'updateUser', payload: user });
 };
 
 const signin =
@@ -33,7 +47,9 @@ const signin =
   async ({ accessToken, refreshToken, user }) => {
     await AsyncStorage.setItem('accessToken', accessToken);
     await AsyncStorage.setItem('refreshToken', refreshToken);
+
     const { role } = user;
+    console.log('NAVIGATE', role);
     switch (role) {
       case 'CUSTOMER':
         navigate('customerFlow');
@@ -43,11 +59,11 @@ const signin =
         navigate('adminFlow');
       default:
     }
-    return { type: 'signin', payload: { accessToken, refreshToken, user } };
+    dispatch({ type: 'signin', payload: { accessToken, refreshToken, user } });
   };
 
 export const { Provider: AuthProvider, Context: AuthContext } = createDataContext(
   authReducer,
-  { signout, signin, tryLocalSignin },
+  { signout, signin, updateUser },
   { accessToken: null, refreshToken: null, user: null }
 );

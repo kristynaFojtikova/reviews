@@ -1,18 +1,28 @@
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, View } from 'react-native';
 import Colors from '../../styles/Colors';
+import { Icon } from 'react-native-elements';
 
-const Button = ({ disabled, loading, text, icon, onPress }) => {
+const Button = ({ disabled, loading, text, iconName, onPress, color = Colors.primary }) => {
   const content = () => {
     if (loading) {
       return <ActivityIndicator color={Colors.lightFont} />;
     }
-    return <Text style={styles.text}>{text}</Text>;
+    return (
+      <View style={styles.contentContainer}>
+        {iconName && <Icon name={iconName} color={Colors.lightFont} />}
+        <Text style={styles.text}>{text}</Text>
+      </View>
+    );
   };
 
   return (
     <TouchableOpacity
-      style={disabled ? { ...styles.container, ...styles.disabledContainer } : styles.container}
+      style={
+        disabled
+          ? { ...styles.container, ...styles.disabledContainer, backgroundColor: color }
+          : { ...styles.container, backgroundColor: color }
+      }
       onPress={onPress}
       disabled={disabled}
     >
@@ -23,8 +33,7 @@ const Button = ({ disabled, loading, text, icon, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    backgroundColor: Colors.primary,
+    padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -33,10 +42,15 @@ const styles = StyleSheet.create({
   disabledContainer: {
     opacity: 0.5,
   },
+  contentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   text: {
     color: Colors.lightFont,
     fontWeight: '600',
-    fontSize: 24,
+    fontSize: 20,
+    marginHorizontal: 15,
   },
 });
 
