@@ -7,7 +7,7 @@ import Spacer from './util/Spacer';
 const ReviewsList = ({ reviews, callback }) => {
   return (
     <>
-      {reviews && reviews.length > 0 && <Text style={styles.subtitle}>Reviews</Text>}
+      {/* {reviews && reviews.length > 0 && <Text style={styles.subtitle}>Reviews</Text>} */}
       <FlatList
         style={styles.list}
         data={reviews}

@@ -14,18 +14,17 @@ import { withNavigation } from 'react-navigation';
 import Colors from '../styles/Colors';
 import * as R from 'ramda';
 
-import ReviewsList from '../components/ReviewsList';
 import ImagesScroller from '../components/ImagesScroller';
-import CreateReviewBox from '../components/CreateReviewBox';
 import useAuthContext from '../context/useAuthContext';
 import { ScrollView } from 'react-native';
 import CREATE_REVIEW from '../graphql/mutations/CREATE_REVIEW';
-import REGISTER from '../graphql/mutations/REGISTER';
 import RESTAURANT from '../graphql/queries/RESTAURANT';
 import CenteringView from '../components/util/CenteringView';
 import Button from '../components/util/Button';
 import DELETE_RESTAURANT from '../graphql/mutations/DELETE_RESTAURANT';
 import Spacer from '../components/util/Spacer';
+import ReviewsList from '../components/ReviewsList';
+import RestaurantDetail from '../components/restaurantDetail';
 
 const RestaurantDetailScreen = ({ navigation }) => {
   // MARK: - Mutations & Queries
@@ -58,6 +57,7 @@ const RestaurantDetailScreen = ({ navigation }) => {
         'Feedback Submitted!',
         'Thank you for your feedback, your review needs to be approved by the owner before it will be visible!'
       );
+      refetchRestaurant();
     }
   }, [createReviewData]);
 
@@ -111,12 +111,6 @@ const RestaurantDetailScreen = ({ navigation }) => {
   const isOwner = role === 'OWNER';
   const isAdmin = role === 'ADMIN';
   const isCustomer = role === 'CUSTOMER';
-  const alreadyReviewed = reviews.find((review) => {
-    return review.reviewerId === userId;
-  });
-  const relevantReviews = isCustomer
-    ? reviews.filter((review) => review.status === 'APPROVED')
-    : reviews;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -124,43 +118,21 @@ const RestaurantDetailScreen = ({ navigation }) => {
         <Text style={styles.title}>{name}</Text>
         <ImagesScroller id={id} />
         <Text style={styles.description}>{description}</Text>
-        <ReviewsList reviews={relevantReviews} callback={refetchRestaurant} />
-        {isCustomer && !alreadyReviewed && (
-          <CreateReviewBox onSubmit={onPressCreateReview} loading={createReviewLoading} />
-        )}
-        <View style={styles.bottomContainer}>
-          {(isOwner || isAdmin) && (
-            <Button
-              text={'Delete restaurant'}
-              iconName="warning"
-              color={Colors.darkFont}
-              onPress={() => deleteRestaurant({ variables: { id: restaurantId } })}
-              loading={deleteRestaurantLoading}
-            />
-          )}
-          {isOwner && (
-            <>
-              <Spacer />
-              <Button
-                text={'Edit restaurant'}
-                iconName="edit"
-                color={Colors.primary}
-                onPress={() =>
-                  navigation.navigate('RestaurantForm', {
-                    item,
-                    callback: () => {
-                      const callback = R.path(['state', 'params', 'callback'], navigation);
-                      if (callback) {
-                        callback();
-                      }
-                      refetchRestaurant();
-                    },
-                  })
-                }
-              />
-            </>
-          )}
-        </View>
+        <RestaurantDetail
+          reviews={reviews}
+          callback={refetchRestaurant}
+          role={role}
+          createReviewLoading={createReviewLoading}
+          createReview={onPressCreateReview}
+          deleteRestaurant={deleteRestaurant}
+          deleteRestaurantLoading={deleteRestaurantLoading}
+          refetchList={() => {
+            const callback = R.path(['state', 'params', 'callback'], navigation);
+            if (callback) {
+              callback();
+            }
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -188,7 +160,7 @@ const styles = StyleSheet.create({
     color: Colors.darkFont,
     fontSize: 14,
   },
-  bottomContainer: {
+  contentContainer: {
     margin: 15,
   },
 });

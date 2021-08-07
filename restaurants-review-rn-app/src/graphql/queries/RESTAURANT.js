@@ -15,6 +15,7 @@ export default gql`
         userComment
         ownerComment
         status
+        createdAt
       }
     }
   }

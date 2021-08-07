@@ -6,28 +6,17 @@ import Colors from '../styles/Colors';
 import Button from './util/Button';
 import Spacer from './util/Spacer';
 import FormInput from './form/FormInput';
+import StarsRow from './StarsRow';
 
 const CreateReviewBox = ({ onSubmit, loading }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState(null);
 
-  const stars = Array.from({ length: 5 }, (_, index) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setRating(index + 1);
-        }}
-      >
-        <Icon name={rating > index ? 'star' : 'star-outline'} color={Colors.darkFont} size={50} />
-      </TouchableOpacity>
-    );
-  });
-
   return (
     <>
       <View style={styles.container}>
         <Text style={styles.subtitle}>Leave a review</Text>
-        <View style={styles.row}>{stars}</View>
+        <StarsRow rating={rating} setRating={setRating} />
         <FormInput
           label={'You can leave a comment with your rating:'}
           value={comment}
@@ -53,13 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     margin: 15,
   },
-  row: {
-    flexDirection: 'row',
-    marginVertical: 5,
-    flex: 1,
-    height: 50,
-    justifyContent: 'space-between',
-  },
+
   subtitle: {
     marginBottom: 10,
     color: Colors.darkFont,

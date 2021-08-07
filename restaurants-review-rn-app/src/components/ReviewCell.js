@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Alert } from 'react-native';
 import { useMutation } from '@apollo/client';
 import { Icon } from 'react-native-elements';
 import * as R from 'ramda';
+import { format } from 'date-fns';
 
 import Colors from '../styles/Colors';
 import Button from './util/Button';
@@ -61,7 +62,7 @@ const ReviewCell = ({ item, callback }) => {
 
   const role = R.path(['user', 'role'], state);
   const userId = R.path(['user', 'id'], state);
-  const { rating, userComment, ownerComment, status, reviewerId, id } = item;
+  const { rating, userComment, ownerComment, status, reviewerId, id, createdAt } = item;
 
   const isOwner = role === 'OWNER';
   const isAdmin = role === 'ADMIN';
@@ -72,8 +73,11 @@ const ReviewCell = ({ item, callback }) => {
     return <Icon name={rating > index ? 'star' : 'star-outline'} color={Colors.primary} />;
   });
 
+  const formattedDate = format(new Date(createdAt), 'd MMM yyyy');
+
   return (
     <View style={styles.container}>
+      <Text style={styles.label}>{formattedDate}</Text>
       <Text style={styles.label}>{'Rating:'}</Text>
       <View style={styles.row}>{stars}</View>
       {(isOwner || isAdmin) && (

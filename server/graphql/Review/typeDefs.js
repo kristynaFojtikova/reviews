@@ -7,6 +7,8 @@ const typeDefs = gql`
     DISAPROVED
   }
 
+  scalar Date
+
   type Review {
     id: ID!
     restaurantId: ID!
@@ -15,6 +17,7 @@ const typeDefs = gql`
     userComment: String
     ownerComment: String
     status: ReviewStatus!
+    createdAt: Date!
   }
 
   extend type Query {

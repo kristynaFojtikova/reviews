@@ -11,6 +11,7 @@ const ImagesScroller = ({ id, grand }) => {
     SampleImages[randomIndex()],
     SampleImages[randomIndex()],
     SampleImages[randomIndex()],
+    SampleImages[randomIndex()],
   ];
   images = R.uniq(images);
 

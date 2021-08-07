@@ -78,21 +78,21 @@ const LoginForm = ({ onSubmit, loading }) => {
       {__DEV__ && (
         <>
           <LinkButton
-            text="Dev: prefil to customer"
+            text="__DEV__: prefil to customer"
             onPress={() => {
-              setEmail('customer@grr.la');
-              setPassword('Test123!');
+              setEmail('customer2@grr.la');
+              setPassword('Testing123!');
             }}
           />
           <LinkButton
-            text="Dev: prefil to owner"
+            text="__DEV__: prefil to owner"
             onPress={() => {
               setEmail('owner@grr.la');
               setPassword('test123');
             }}
           />
           <LinkButton
-            text="Dev: prefil to admin"
+            text="__DEV__: prefil to admin"
             onPress={() => {
               setEmail('admin@grr.la');
               setPassword('test123');

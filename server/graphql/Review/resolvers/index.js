@@ -1,18 +1,24 @@
+const {
+  GraphQLDate,
+  GraphQLTime,
+  GraphQLDateTime,
+} = require("graphql-iso-date");
 
-const createReview = require('./createReview');
-const deleteReview = require('./deleteReview');
-const approveReview = require('./approveReview');
-const reviews = require('./reviews');
+const createReview = require("./createReview");
+const deleteReview = require("./deleteReview");
+const approveReview = require("./approveReview");
+const reviews = require("./reviews");
 
 const resolvers = {
-    Query: {
-        reviews: reviews
-    },
-    Mutation: {
-        createReview,
-        approveReview,
-        deleteReview
-    }
+  Date: GraphQLDate,
+  Query: {
+    reviews: reviews,
+  },
+  Mutation: {
+    createReview,
+    approveReview,
+    deleteReview,
+  },
 };
 
-module.exports = resolvers
+module.exports = resolvers;
