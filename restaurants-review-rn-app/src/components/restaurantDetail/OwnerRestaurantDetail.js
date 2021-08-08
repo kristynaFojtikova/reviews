@@ -9,6 +9,7 @@ import ReviewCell from '../ReviewCell';
 import ReviewsList from '../ReviewsList';
 import Button from '../util/Button';
 import Spacer from '../util/Spacer';
+import getAverageRatingFor from '../../util/getAverageRatingFor';
 
 const OwnerRestaurantDetail = ({
   reviews,
@@ -17,17 +18,12 @@ const OwnerRestaurantDetail = ({
   deleteRestaurant,
   deleteRestaurantLoading,
   navigation,
+  item,
 }) => {
   const pendingReviews = reviews.filter((review) => review.status === 'PENDING');
   const approvedReviews = reviews.filter((review) => review.status === 'APPROVED');
 
-  const avgRating =
-    approvedReviews.length > 0
-      ? Math.floor(
-          approvedReviews.reduce((total, review) => total + review.rating, 0) /
-            approvedReviews.length
-        )
-      : null;
+  const avgRating = getAverageRatingFor(reviews);
 
   return (
     <>

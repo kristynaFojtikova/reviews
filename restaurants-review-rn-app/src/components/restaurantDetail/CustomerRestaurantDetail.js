@@ -8,6 +8,7 @@ import ReviewCell from './../ReviewCell';
 import ReviewsList from './../ReviewsList';
 import useAuthContext from '../../context/useAuthContext';
 import CreateReviewBox from '../CreateReviewBox';
+import getAverageRatingFor from '../../util/getAverageRatingFor';
 
 const CustomerRestaurantDetail = ({ reviews, callback, createReviewLoading, createReview }) => {
   const relevantReviews = reviews.filter((review) => review.status === 'APPROVED');
@@ -39,13 +40,7 @@ const CustomerRestaurantDetail = ({ reviews, callback, createReviewLoading, crea
           .slice(0, 5)
       : null;
 
-  const avgRating =
-    relevantReviews.length > 0
-      ? Math.floor(
-          relevantReviews.reduce((total, review) => total + review.rating, 0) /
-            relevantReviews.length
-        )
-      : null;
+  const avgRating = getAverageRatingFor(relevantReviews);
 
   const alreadyReviewed = reviews.find((review) => {
     return review.reviewerId === userId;
@@ -93,7 +88,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
   },
-
   contentContainer: {
     margin: 15,
   },

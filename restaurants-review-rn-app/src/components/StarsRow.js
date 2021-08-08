@@ -4,20 +4,28 @@ import { Icon } from 'react-native-elements';
 
 import Colors from '../styles/Colors';
 
-const StarsRow = ({ rating, setRating, color = Colors.darkFont, disabled }) => {
+const StarsRow = ({ rating, setRating, color = Colors.darkFont, disabled, small }) => {
   const stars = Array.from({ length: 5 }, (_, index) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          setRating(index + 1);
+          if (rating === index + 1) {
+            setRating(0);
+          } else {
+            setRating(index + 1);
+          }
         }}
         disabled={disabled}
       >
-        <Icon name={rating > index ? 'star' : 'star-outline'} color={color} size={50} />
+        <Icon
+          name={rating > index ? 'star' : 'star-outline'}
+          color={color}
+          size={small ? 20 : 50}
+        />
       </TouchableOpacity>
     );
   });
-  return <View style={styles.row}>{stars}</View>;
+  return <View style={small ? { ...styles.row, ...styles.small } : styles.row}>{stars}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -27,6 +35,10 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     justifyContent: 'space-between',
+  },
+  small: {
+    height: 20,
+    width: 115,
   },
 });
 

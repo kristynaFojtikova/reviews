@@ -4,14 +4,19 @@ import * as R from 'ramda';
 import { Icon } from 'react-native-elements';
 import Colors from '../styles/Colors';
 import ImagesScroller from './ImagesScroller';
+import StarsRow from './StarsRow';
+import getAverageRatingFor from '../util/getAverageRatingFor';
 
 const RestaurantCell = ({ item, onPress }) => {
-  const { id, name, description } = item;
+  const { id, name, description, reviews } = item;
+
+  const averageRating = getAverageRatingFor(reviews);
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.topContentContainer}>
         <Text style={styles.title}>{name}</Text>
+        <StarsRow rating={averageRating} disabled small />
       </View>
       <ImagesScroller id={id} />
       <View style={styles.bottomContentContainer}>

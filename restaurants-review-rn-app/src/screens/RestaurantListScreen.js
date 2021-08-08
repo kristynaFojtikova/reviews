@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -17,6 +17,8 @@ import Colors from '../styles/Colors';
 import RestaurantCell from '../components/RestaurantCell';
 import FloatingButton from '../components/util/FloatingButton';
 import useAuthContext from '../context/useAuthContext';
+import StarsRow from '../components/StarsRow';
+import getAverageRatingFor from '../util/getAverageRatingFor';
 
 const RestaurantListScreen = ({ navigation }) => {
   const { loading, error, data, refetch } = useQuery(RESTAURANTS);
@@ -24,9 +26,19 @@ const RestaurantListScreen = ({ navigation }) => {
   const { state } = useAuthContext();
   const role = R.path(['user', 'role'], state);
   const isOwner = role === 'OWNER';
-  const isAdmin = role === 'ADMIN';
 
   const restaurants = data ? data.restaurants : null;
+
+  const [starFilter, setStarFilter] = useState(0);
+
+  const filteredRestaurants = restaurants
+    ? restaurants.filter((restaurant) => {
+        const averageRating = getAverageRatingFor(restaurant.reviews);
+        console.log('Average rating', averageRating);
+        console.log('Star filter', starFilter);
+        return averageRating && averageRating >= starFilter;
+      })
+    : null;
 
   const renderItem = ({ item }) => {
     const onPress = () =>
@@ -46,10 +58,19 @@ const RestaurantListScreen = ({ navigation }) => {
           />
         )}
       </View>
+
       {restaurants && (
         <FlatList
+          ListHeaderComponent={() => {
+            return (
+              <View style={styles.contentContainer}>
+                <Text style={styles.label}>{'Filter by rating'}</Text>
+                <StarsRow rating={starFilter} setRating={setStarFilter} />
+              </View>
+            );
+          }}
           loading={loading}
-          data={restaurants}
+          data={filteredRestaurants}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           style={styles.list}
@@ -74,6 +95,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: {
+    margin: 15,
+  },
   statusBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -83,6 +107,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     fontWeight: '800',
+  },
+  label: {
+    color: Colors.darkFont,
+    fontSize: 14,
+    marginVertical: 5,
   },
   list: {},
 });

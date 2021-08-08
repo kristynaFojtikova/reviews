@@ -125,6 +125,7 @@ const RestaurantDetailScreen = ({ navigation }) => {
           createReviewLoading={createReviewLoading}
           createReview={onPressCreateReview}
           deleteRestaurant={deleteRestaurant}
+          item={item}
           deleteRestaurantLoading={deleteRestaurantLoading}
           refetchList={() => {
             const callback = R.path(['state', 'params', 'callback'], navigation);
