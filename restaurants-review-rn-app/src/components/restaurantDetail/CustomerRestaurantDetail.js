@@ -1,20 +1,25 @@
-import React, { useContext, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Text, Image, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 import * as R from 'ramda';
 
-import Colors from '../../styles/Colors';
-import StarsRow from './../StarsRow';
-import ReviewCell from './../ReviewCell';
-import ReviewsList from './../ReviewsList';
-import useAuthContext from '../../context/useAuthContext';
+import StarsRow from '../StarsRow';
+import ReviewCell from '../ReviewCell';
+import ReviewsList from '../ReviewsList';
 import CreateReviewBox from '../CreateReviewBox';
 import getAverageRatingFor from '../../util/getAverageRatingFor';
+import { useRestaurantContext } from '../../context/RestaurantContext';
+import CommonStyles from '../../styles/CommonStyles';
+import userDetailsHandle from '../../util/userDetailsHandle';
+import { useAuthContext } from '../../context/AuthContext';
 
-const CustomerRestaurantDetail = ({ reviews, callback, createReviewLoading, createReview }) => {
+const CustomerRestaurantDetail = () => {
+  const { restaurant } = useRestaurantContext();
+
+  const { reviews } = restaurant;
   const relevantReviews = reviews.filter((review) => review.status === 'APPROVED');
-  const { state } = useAuthContext();
-  const role = R.path(['user', 'role'], state);
-  const userId = R.path(['user', 'id'], state);
+
+  const { user } = useAuthContext();
+  const { id: userId } = userDetailsHandle(user);
 
   const highestReview =
     relevantReviews.length > 0
@@ -40,57 +45,40 @@ const CustomerRestaurantDetail = ({ reviews, callback, createReviewLoading, crea
           .slice(0, 5)
       : null;
 
-  const avgRating = getAverageRatingFor(relevantReviews);
-
-  const alreadyReviewed = reviews.find((review) => {
-    return review.reviewerId === userId;
-  });
+  const avgRating = getAverageRatingFor(restaurant);
+  const alreadyReviewed = reviews.find((review) => review.reviewerId === userId);
 
   return (
     <>
       {avgRating && (
         <>
-          <Text style={styles.subtitle}>Average Rating</Text>
-          <View style={styles.contentContainer}>
+          <Text style={CommonStyles.subtitle}>Average Rating</Text>
+          <View style={CommonStyles.contentContainer}>
             <StarsRow rating={avgRating} disabled />
           </View>
         </>
       )}
-      {!alreadyReviewed && (
-        <CreateReviewBox onSubmit={createReview} loading={createReviewLoading} />
-      )}
+      {!alreadyReviewed && <CreateReviewBox />}
       {highestReview && (
         <>
-          <Text style={styles.subtitle}>Best Review</Text>
-          <ReviewCell item={highestReview} callback={callback} />
+          <Text style={CommonStyles.subtitle}>Best Review</Text>
+          <ReviewCell item={highestReview} />
         </>
       )}
       {lowestReview && (
         <>
-          <Text style={styles.subtitle}>Worst Review</Text>
-          <ReviewCell item={lowestReview} callback={callback} />
+          <Text style={CommonStyles.subtitle}>Worst Review</Text>
+          <ReviewCell item={lowestReview} />
         </>
       )}
       {latestReviews && (
         <>
-          <Text style={styles.subtitle}>Latest Reviews</Text>
-          <ReviewsList reviews={latestReviews} callback={callback} />
+          <Text style={CommonStyles.subtitle}>Latest Reviews</Text>
+          <ReviewsList reviews={latestReviews} />
         </>
       )}
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  subtitle: {
-    margin: 15,
-    color: Colors.darkFont,
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  contentContainer: {
-    margin: 15,
-  },
-});
 
 export default CustomerRestaurantDetail;

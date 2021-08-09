@@ -1,51 +1,49 @@
-import React, { useContext, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { useMutation } from '@apollo/client';
+import React, { useEffect } from 'react';
+import { SafeAreaView, Alert } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import * as R from 'ramda';
 
-import REGISTER from '../graphql/mutations/REGISTER';
 import UserForm from '../components/UserForm';
-import LinkButton from '../components/util/LinkButton';
-import useAuthContext from '../context/useAuthContext';
 import Spacer from '../components/util/Spacer';
+import { useUsersContext } from '../context/UsersContext';
+import CommonStyles from '../styles/CommonStyles';
 
 const UserFormScreen = ({ navigation }) => {
-  const { signin } = useAuthContext();
-
-  const [action, { data, loading, error }] = useMutation(REGISTER);
-
-  const onSubmit = ({ email, password, role }) => {
-    action({ variables: { input: { email, password, role } } });
-  };
+  const {
+    createUser,
+    createUserLoading,
+    setCreateUserData,
+    createUserData,
+    error,
+    setError,
+    usersFetch,
+  } = useUsersContext();
 
   useEffect(() => {
-    if (data) {
-      const { user, message } = data.register;
+    if (createUserData) {
+      const { user, message } = createUserData.register;
       if (message) {
         Alert.alert('Ooops!', message);
       }
       if (user) {
-        const callback = R.path(['state', 'params', 'callback'], navigation);
-        if (callback) {
-          callback();
-        }
+        usersFetch();
         navigation.pop();
       }
+      setCreateUserData();
     }
-  }, [data]);
+  }, [createUserData]);
 
   useEffect(() => {
     if (error) {
-      let message =
+      const message =
         error.message || 'There was a problem with your request, please try again later';
       Alert.alert('Ooops!', message);
+      setError();
     }
   }, [error]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <UserForm onSubmit={onSubmit} loading={loading} admin />
+    <SafeAreaView style={CommonStyles.container}>
+      <UserForm onSubmit={createUser} loading={createUserLoading} admin />
       <Spacer />
     </SafeAreaView>
   );
@@ -54,11 +52,5 @@ const UserFormScreen = ({ navigation }) => {
 UserFormScreen.navigationOptions = {
   header: () => false,
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default withNavigation(UserFormScreen);

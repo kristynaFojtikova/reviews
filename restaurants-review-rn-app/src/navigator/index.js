@@ -4,12 +4,12 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import AccountScreen from '../screens/AccountScreen';
 import RestaurantFormScreen from '../screens/RestaurantFormScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import ResolveAuthScreen from '../screens/ResolveAuthScreen';
 import RestaurantDetailScreen from '../screens/RestaurantDetailScreen';
 import RestaurantListScreen from '../screens/RestaurantListScreen';
 import SignInScreen from '../screens/SignInScreen';
 import UsersListScreen from '../screens/UsersListScreen';
 import UserFormScreen from '../screens/UserFormScreen';
+import LandingScreen from '../screens/LandingScreen';
 
 const restaurantStackNavigator = createStackNavigator({
   RestaurantList: RestaurantListScreen,
@@ -23,7 +23,7 @@ const userStackNavigator = createStackNavigator({
 });
 
 const navigator = createSwitchNavigator({
-  landingScreen: ResolveAuthScreen,
+  landingScreen: LandingScreen,
   authFlow: createStackNavigator({
     Signin: SignInScreen,
     Register: RegisterScreen,

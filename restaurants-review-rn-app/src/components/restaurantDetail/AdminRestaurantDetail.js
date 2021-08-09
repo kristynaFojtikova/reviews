@@ -1,62 +1,49 @@
 import React, { useContext, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Text, Image, View } from 'react-native';
+import { Text, View } from 'react-native';
 import * as R from 'ramda';
 
 import Colors from '../../styles/Colors';
 import StarsRow from '../StarsRow';
-import ReviewCell from '../ReviewCell';
 import ReviewsList from '../ReviewsList';
 import Button from '../util/Button';
 import getAverageRatingFor from '../../util/getAverageRatingFor';
+import CommonStyles from '../../styles/CommonStyles';
+import { useRestaurantContext } from '../../context/RestaurantContext';
 
-const AdminRestaurantDetail = ({
-  reviews,
-  callback,
-  deleteRestaurant,
-  deleteRestaurantLoading,
-}) => {
-  const approvedReviews = reviews.filter((review) => review.status === 'APPROVED');
-  const avgRating = getAverageRatingFor(reviews);
+const AdminRestaurantDetail = () => {
+  const { restaurant, deleteRestaurant, deleteRestaurantLoading } = useRestaurantContext();
+
+  const { reviews } = restaurant;
+
+  const avgRating = getAverageRatingFor(restaurant);
 
   return (
     <>
       {avgRating && (
         <>
-          <Text style={styles.subtitle}>Average Rating</Text>
-          <View style={styles.contentContainer}>
+          <Text style={CommonStyles.subtitle}>Average Rating</Text>
+          <View style={CommonStyles.contentContainer}>
             <StarsRow rating={avgRating} disabled />
           </View>
         </>
       )}
       {reviews.length > 0 && (
         <>
-          <Text style={styles.subtitle}>All Reviews</Text>
-          <ReviewsList reviews={reviews} callback={callback} />
+          <Text style={CommonStyles.subtitle}>All Reviews</Text>
+          <ReviewsList reviews={reviews} />
         </>
       )}
-      <View style={styles.contentContainer}>
+      <View style={CommonStyles.contentContainer}>
         <Button
-          text={'Delete restaurant'}
+          text="Delete restaurant"
           iconName="warning"
           color={Colors.darkFont}
-          onPress={() => deleteRestaurant({ variables: { id: restaurantId } })}
+          onPress={deleteRestaurant}
           loading={deleteRestaurantLoading}
         />
       </View>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  subtitle: {
-    margin: 15,
-    color: Colors.darkFont,
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  contentContainer: {
-    margin: 15,
-  },
-});
 
 export default AdminRestaurantDetail;

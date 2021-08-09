@@ -10,7 +10,7 @@ import getAverageRatingFor from '../util/getAverageRatingFor';
 const RestaurantCell = ({ item, onPress }) => {
   const { id, name, description, reviews } = item;
 
-  const averageRating = getAverageRatingFor(reviews);
+  const averageRating = getAverageRatingFor(item);
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>

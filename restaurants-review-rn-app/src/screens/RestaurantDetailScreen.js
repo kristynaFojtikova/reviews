@@ -1,105 +1,71 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
   Alert,
   Text,
   ActivityIndicator,
+  ScrollView,
   FlatList,
-  Image,
-  View,
 } from 'react-native';
-import { useMutation, useQuery } from '@apollo/client';
 import { withNavigation } from 'react-navigation';
-import Colors from '../styles/Colors';
-import * as R from 'ramda';
 
+import Colors from '../styles/Colors';
 import ImagesScroller from '../components/ImagesScroller';
-import useAuthContext from '../context/useAuthContext';
-import { ScrollView } from 'react-native';
-import CREATE_REVIEW from '../graphql/mutations/CREATE_REVIEW';
-import RESTAURANT from '../graphql/queries/RESTAURANT';
 import CenteringView from '../components/util/CenteringView';
-import Button from '../components/util/Button';
-import DELETE_RESTAURANT from '../graphql/mutations/DELETE_RESTAURANT';
-import Spacer from '../components/util/Spacer';
-import ReviewsList from '../components/ReviewsList';
 import RestaurantDetail from '../components/restaurantDetail';
+import { useRestaurantsContext } from '../context/RestaurantsContext';
+import { useRestaurantContext } from '../context/RestaurantContext';
+import Button from '../components/util/Button';
 
 const RestaurantDetailScreen = ({ navigation }) => {
-  // MARK: - Mutations & Queries
-  const [
-    createReview,
-    { data: createReviewData, loading: createReviewLoading, error: createReviewError },
-  ] = useMutation(CREATE_REVIEW);
-  const [
-    deleteRestaurant,
-    { data: deleteRestaurantData, loading: deleteRestaurantLoading, error: deleteRestaurantError },
-  ] = useMutation(DELETE_RESTAURANT);
-  const restaurantId = navigation.state.params.id;
+  const { restaurantsFetch } = useRestaurantsContext();
   const {
-    _,
-    error: restaurantError,
-    data: restaurantData,
-    refetch: refetchRestaurant,
-  } = useQuery(RESTAURANT, {
-    variables: {
-      id: restaurantId,
-    },
-    fetchPolicy: 'no-cache',
-  });
+    restaurant,
+    restaurantFetch,
+    createReviewSuccess,
+    setCreateReviewSuccess,
+    deleteRestaurantSuccess,
+    setDeleteRestaurantSuccess,
+    error,
+    setError,
+  } = useRestaurantContext();
 
-  // MARK: - Handle data & error changes alerts
+  // MARK: - Handle success & error alerts
 
   useEffect(() => {
-    if (createReviewData) {
+    if (createReviewSuccess) {
       Alert.alert(
         'Feedback Submitted!',
         'Thank you for your feedback, your review needs to be approved by the owner before it will be visible!'
       );
-      refetchRestaurant();
+      restaurantFetch();
+      setCreateReviewSuccess();
     }
-  }, [createReviewData]);
+  }, [createReviewSuccess]);
 
   useEffect(() => {
-    if (deleteRestaurantData) {
-      const callback = R.path(['state', 'params', 'callback'], navigation);
-      if (callback) {
-        callback();
-      }
+    if (deleteRestaurantSuccess) {
+      restaurantsFetch();
+      setDeleteRestaurantSuccess();
       navigation.navigate('RestaurantList');
       Alert.alert('Success!', 'Your restaurant has been deleted!');
+      setDeleteRestaurantSuccess();
     }
-  }, [deleteRestaurantData]);
+  }, [deleteRestaurantSuccess]);
 
   useEffect(() => {
-    const error = createReviewError || deleteRestaurantError;
     if (error) {
-      let message =
+      const message =
         error.message || 'There was a problem with your request, please try again later';
       Alert.alert('Ooops!', message);
+      setError();
     }
-  }, [createReviewError, deleteRestaurantError]);
-
-  // MARK: - Hooks & local data
-
-  const { state } = useAuthContext();
-  const role = R.path(['user', 'role'], state);
-  const userId = R.path(['user', 'id'], state);
-
-  const item = R.path(['restaurant'], restaurantData);
-
-  // MARK: - Actions
-
-  const onPressCreateReview = ({ rating, comment }) => {
-    createReview({
-      variables: { input: { restaurantId: id, rating, userComment: comment } },
-    });
-  };
+  }, [error]);
 
   // MARK: - Render
 
-  if (!item) {
+  if (!restaurant) {
     return (
       <CenteringView>
         <ActivityIndicator color={Colors.primary} />
@@ -107,34 +73,20 @@ const RestaurantDetailScreen = ({ navigation }) => {
     );
   }
 
-  const { id, name, description, reviews } = item;
-  const isOwner = role === 'OWNER';
-  const isAdmin = role === 'ADMIN';
-  const isCustomer = role === 'CUSTOMER';
+  const { id, name, description, reviews } = restaurant;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Text style={styles.title}>{name}</Text>
-        <ImagesScroller id={id} />
-        <Text style={styles.description}>{description}</Text>
-        <RestaurantDetail
-          reviews={reviews}
-          callback={refetchRestaurant}
-          role={role}
-          createReviewLoading={createReviewLoading}
-          createReview={onPressCreateReview}
-          deleteRestaurant={deleteRestaurant}
-          item={item}
-          deleteRestaurantLoading={deleteRestaurantLoading}
-          refetchList={() => {
-            const callback = R.path(['state', 'params', 'callback'], navigation);
-            if (callback) {
-              callback();
-            }
-          }}
-        />
-      </ScrollView>
+      <FlatList
+        ListHeaderComponent={() => (
+          <>
+            <Text style={styles.title}>{name}</Text>
+            <ImagesScroller id={id} />
+            <Text style={styles.description}>{description}</Text>
+            <RestaurantDetail />
+          </>
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -150,19 +102,10 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '800',
   },
-  subtitle: {
-    margin: 15,
-    color: Colors.darkFont,
-    fontSize: 24,
-    fontWeight: '600',
-  },
   description: {
     margin: 15,
     color: Colors.darkFont,
     fontSize: 14,
-  },
-  contentContainer: {
-    margin: 15,
   },
 });
 

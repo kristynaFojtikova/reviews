@@ -1,88 +1,63 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  Text,
-  ActivityIndicator,
-  FlatList,
-  View,
-} from 'react-native';
-import { useQuery } from '@apollo/client';
+import React, { useEffect } from 'react';
+import { StyleSheet, SafeAreaView, Text, View } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import * as R from 'ramda';
-import RESTAURANTS from '../graphql/queries/RESTAURANTS';
-import CenteringView from '../components/util/CenteringView';
+
 import Colors from '../styles/Colors';
-import RestaurantCell from '../components/RestaurantCell';
 import FloatingButton from '../components/util/FloatingButton';
-import useAuthContext from '../context/useAuthContext';
-import StarsRow from '../components/StarsRow';
-import getAverageRatingFor from '../util/getAverageRatingFor';
+import { useRestaurantsContext } from '../context/RestaurantsContext';
+import { useRestaurantContext } from '../context/RestaurantContext';
+import RestaurantsList from '../components/RestaurantsList';
+import CommonStyles from '../styles/CommonStyles';
+import { useAuthContext } from '../context/AuthContext';
+import userDetailsHandle from '../util/userDetailsHandle';
 
 const RestaurantListScreen = ({ navigation }) => {
-  const { loading, error, data, refetch } = useQuery(RESTAURANTS);
+  const {
+    restaurants,
+    restaurantsError: error,
+    restaurantsFetch: fetch,
+    restaurantsLoading: loading,
+    starFilter,
+    setStarFilter,
+  } = useRestaurantsContext();
 
-  const { state } = useAuthContext();
-  const role = R.path(['user', 'role'], state);
-  const isOwner = role === 'OWNER';
+  const { setRestaurantId } = useRestaurantContext();
 
-  const restaurants = data ? data.restaurants : null;
+  useEffect(() => {
+    fetch();
+  }, []);
 
-  const [starFilter, setStarFilter] = useState(0);
+  const { user } = useAuthContext();
+  const { isOwner } = userDetailsHandle(user);
 
-  const filteredRestaurants = restaurants
-    ? restaurants.filter((restaurant) => {
-        const averageRating = getAverageRatingFor(restaurant.reviews);
-        console.log('Average rating', averageRating);
-        console.log('Star filter', starFilter);
-        return averageRating && averageRating >= starFilter;
-      })
-    : null;
-
-  const renderItem = ({ item }) => {
-    const onPress = () =>
-      navigation.navigate('RestaurantDetail', { id: item.id, callback: refetch });
-    return <RestaurantCell item={item} onPress={onPress} />;
+  const onPress = (id) => {
+    setRestaurantId(id);
+    navigation.navigate('RestaurantDetail');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={CommonStyles.container}>
       <View style={styles.statusBar}>
-        <Text style={styles.title}>{'Restaurants'}</Text>
+        <Text style={styles.title}>Restaurants</Text>
         {isOwner && (
           <FloatingButton
             iconName="add-circle-outline"
             tintColor={Colors.darkFont}
-            onPress={() => navigation.navigate('RestaurantForm', { callback: refetch })}
+            onPress={() => {
+              setRestaurantId();
+              navigation.navigate('RestaurantForm');
+            }}
           />
         )}
       </View>
-
-      {restaurants && (
-        <FlatList
-          ListHeaderComponent={() => {
-            return (
-              <View style={styles.contentContainer}>
-                <Text style={styles.label}>{'Filter by rating'}</Text>
-                <StarsRow rating={starFilter} setRating={setStarFilter} />
-              </View>
-            );
-          }}
-          loading={loading}
-          data={filteredRestaurants}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          style={styles.list}
-          onRefresh={refetch}
-          refreshing={loading}
-        />
-      )}
-      {loading && !restaurants && (
-        <CenteringView>
-          <ActivityIndicator color={Colors.primary} />
-        </CenteringView>
-      )}
+      <RestaurantsList
+        starFilter={starFilter}
+        setStarFilter={setStarFilter}
+        loading={loading}
+        restaurants={restaurants}
+        onRefresh={fetch}
+        onSelectItem={onPress}
+      />
     </SafeAreaView>
   );
 };
@@ -92,12 +67,6 @@ RestaurantListScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    margin: 15,
-  },
   statusBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -108,12 +77,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '800',
   },
-  label: {
-    color: Colors.darkFont,
-    fontSize: 14,
-    marginVertical: 5,
-  },
-  list: {},
 });
 
 export default withNavigation(RestaurantListScreen);

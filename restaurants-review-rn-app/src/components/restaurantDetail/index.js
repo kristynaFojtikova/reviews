@@ -1,10 +1,13 @@
 import React from 'react';
-import * as R from 'ramda';
 import CustomerRestaurantDetail from './CustomerRestaurantDetail';
 import OwnerRestaurantDetail from './OwnerRestaurantDetail';
 import AdminRestaurantDetail from './AdminRestaurantDetail';
+import { useAuthContext } from '../../context/AuthContext';
+import userDetailsHandle from '../../util/userDetailsHandle';
 
-const RestaurantDetail = ({ role, ...props }) => {
+const RestaurantDetail = (props) => {
+  const { user } = useAuthContext();
+  const { role } = userDetailsHandle(user);
   switch (role) {
     case 'CUSTOMER':
       return <CustomerRestaurantDetail {...props} />;

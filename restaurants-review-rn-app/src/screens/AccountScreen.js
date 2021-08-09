@@ -1,49 +1,49 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Alert, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, Text } from 'react-native';
 import { useMutation } from '@apollo/client';
 import { withNavigation } from 'react-navigation';
 import * as R from 'ramda';
 
-import useAuthContext from '../context/useAuthContext';
 import Spacer from '../components/util/Spacer';
 import Button from '../components/util/Button';
 import LOGOUT from '../graphql/mutations/LOGOUT';
 import Colors from '../styles/Colors';
+import { useAuthContext } from '../context/AuthContext';
 
-import { ApolloConsumer } from '@apollo/client';
 import { clearApolloStore } from '../graphql/client';
 
 const AccountScreen = ({ navigation }) => {
-  const { signout, state } = useAuthContext();
+  const { user, refreshToken } = useAuthContext();
 
-  const [performLogout, { data, loading, error }] = useMutation(LOGOUT);
-
-  const { user, refreshToken } = state;
+  // const [performLogout, { data, loading, error }] = useMutation(LOGOUT);
 
   const onLogout = () => {
     clearApolloStore();
-    signout();
-    performLogout({ variables: { refreshToken } });
+    navigation.navigate('authFlow');
+    // signout();
+    // performLogout({ variables: { refreshToken } });
   };
 
-  useEffect(() => {
-    if (data) {
-      const { logout: success } = data;
-      if (success) {
-        // clearApolloStore();
-        // signout();
-      }
-    }
-  }, [data, error]);
+  const loading = false;
+
+  // useEffect(() => {
+  //   if (data) {
+  //     const { logout: success } = data;
+  //     if (success) {
+  //       // clearApolloStore();
+  //       // signout();
+  //     }
+  //   }
+  // }, [data, error]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>{'Account'}</Text>
+      <Text style={styles.title}>Account</Text>
       <Text style={styles.description}>{` ${R.prop('email', user)}`}</Text>
       <Text style={styles.description}>{`Your current role: ${R.prop('role', user)}`}</Text>
       <Spacer height={30} />
       <Button
-        text={'Logout'}
+        text="Logout"
         iconName="logout"
         onPress={onLogout}
         loading={loading}

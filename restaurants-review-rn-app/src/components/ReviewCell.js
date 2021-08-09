@@ -2,87 +2,76 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Alert } from 'react-native';
 import { useMutation } from '@apollo/client';
 import { Icon } from 'react-native-elements';
-import * as R from 'ramda';
 import { format } from 'date-fns';
 
 import Colors from '../styles/Colors';
 import Button from './util/Button';
 import Spacer from './util/Spacer';
 import FormInput from './form/FormInput';
-import useAuthContext from '../context/useAuthContext';
-import DELETE_REVIEW from '../graphql/mutations/DELETE_REVIEW';
-import APPROVE_REVIEW from '../graphql/mutations/APPROVE_REVIEW';
+import { useAuthContext } from '../context/AuthContext';
+import userDetailsHandle from '../util/userDetailsHandle';
+import { useRestaurantContext } from '../context/RestaurantContext';
 
-const ReviewCell = ({ item, callback }) => {
-  // MARK: - Mutations
-  const [approveReview, { data: approveData, loading: approveLoading, error: approveError }] =
-    useMutation(APPROVE_REVIEW);
-  const [deleteReview, { data: deleteData, loading: deleteLoading, error: deleteError }] =
-    useMutation(DELETE_REVIEW);
-
-  useEffect(() => {
-    const data = approveData || deleteData;
-    if (data) {
-      if (callback) {
-        callback();
-      }
-    }
-  }, [approveData, deleteData]);
-
-  useEffect(() => {
-    const error = deleteError || approveError;
-    if (error) {
-      let message =
-        error.message || 'There was a problem with your request, please try again later';
-
-      Alert.alert('Ooops!', message);
-    }
-    // TODO: - Graphql error handle & check network error
-  }, [approveError, deleteError]);
-
+const ReviewCell = ({ item }) => {
   // MARK: - Hooks & local state
+  const [ownerReplyInput, setOwnerReplyInput] = useState();
 
-  const { state } = useAuthContext();
-  const [composedOwnerReply, setComposedOwnerReply] = useState();
+  const {
+    approveReviewLoading,
+    deleteReviewLoading,
+    approveReview,
+    deleteReview,
+    approveReviewSuccess,
+    setApproveReviewSuccess,
+    deleteReviewSuccess,
+    setDeleteReviewSuccess,
+    restaurantFetch,
+  } = useRestaurantContext();
+
+  useEffect(() => {
+    if (approveReviewSuccess) {
+      restaurantFetch();
+      setApproveReviewSuccess();
+    }
+  }, [approveReviewSuccess]);
+
+  useEffect(() => {
+    if (deleteReviewSuccess) {
+      restaurantFetch();
+      setDeleteReviewSuccess();
+    }
+  }, [deleteReviewSuccess]);
+
+  const { user } = useAuthContext();
+  const { isAdmin, isOwner, id: userId } = userDetailsHandle(user);
+  const { rating, userComment, ownerComment, status, reviewerId, id, createdAt } = item;
+  const isReviewer = userId === reviewerId;
 
   // MARK: - Actions
 
   const onApprove = (approved) => {
-    approveReview({
-      variables: { input: { approved, ownerComment: composedOwnerReply || ownerComment, id } },
-    });
+    approveReview({ approved, ownerComment: ownerReplyInput || ownerComment, id });
   };
   const onDelete = () => {
-    deleteReview({
-      variables: { id },
-    });
+    deleteReview({ id });
   };
 
   // MARK: - Render
 
-  const role = R.path(['user', 'role'], state);
-  const userId = R.path(['user', 'id'], state);
-  const { rating, userComment, ownerComment, status, reviewerId, id, createdAt } = item;
-
-  const isOwner = role === 'OWNER';
-  const isAdmin = role === 'ADMIN';
-  const isCustomer = role === 'CUSTOMER';
-  const isReviewer = userId === reviewerId;
-
-  const stars = Array.from({ length: 5 }, (_, index) => {
-    return <Icon name={rating > index ? 'star' : 'star-outline'} color={Colors.primary} />;
-  });
+  const stars = Array.from({ length: 5 }, (_, index) => (
+    <Icon name={rating > index ? 'star' : 'star-outline'} color={Colors.primary} />
+  ));
 
   const formattedDate = format(new Date(createdAt), 'd MMM yyyy');
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{formattedDate}</Text>
-      <Text style={styles.label}>{'Rating:'}</Text>
+      <Text style={styles.label}>Rating:</Text>
       <View style={styles.row}>{stars}</View>
       {(isOwner || isAdmin) && (
         <>
-          <Text style={styles.label}>{'Review status:'}</Text>
+          <Text style={styles.label}>Review status:</Text>
           <Text style={styles.status}>{status}</Text>
         </>
       )}
@@ -98,19 +87,19 @@ const ReviewCell = ({ item, callback }) => {
         <>
           {!ownerComment && status !== 'APPROVED' && (
             <FormInput
-              label={'You can reply to this customer:'}
-              value={composedOwnerReply}
-              setValue={setComposedOwnerReply}
+              label="You can reply to this customer:"
+              value={ownerReplyInput}
+              setValue={setOwnerReplyInput}
             />
           )}
           {status !== 'APPROVED' && (
             <>
               <Spacer height={10} />
               <Button
-                text={'Approve review'}
+                text="Approve review"
                 iconName="check"
                 onPress={() => onApprove(true)}
-                loading={approveLoading}
+                loading={approveReviewLoading}
               />
             </>
           )}
@@ -118,11 +107,11 @@ const ReviewCell = ({ item, callback }) => {
             <>
               <Spacer height={10} />
               <Button
-                text={'Dissaprove review'}
+                text="Dissaprove review"
                 iconName="do-not-disturb"
                 color={Colors.error}
                 onPress={() => onApprove(false)}
-                loading={approveLoading}
+                loading={approveReviewLoading}
               />
             </>
           )}
@@ -132,11 +121,11 @@ const ReviewCell = ({ item, callback }) => {
         <>
           <Spacer height={10} />
           <Button
-            text={'Delete review'}
+            text="Delete review"
             iconName="delete"
             color={Colors.error}
             onPress={onDelete}
-            loading={deleteLoading}
+            loading={deleteReviewLoading}
           />
         </>
       )}

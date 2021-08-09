@@ -1,55 +1,63 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { useMutation } from '@apollo/client';
+import React, { useEffect } from 'react';
+import { SafeAreaView, Alert } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import * as R from 'ramda';
 
-import REGISTER from '../graphql/mutations/REGISTER';
-import UserForm from '../components/UserForm';
-import LinkButton from '../components/util/LinkButton';
-import useAuthContext from '../context/useAuthContext';
-import Spacer from '../components/util/Spacer';
 import RestaurantForm from '../components/RestaurantForm';
-import CREATE_RESTAURANT from '../graphql/mutations/CREATE_RESTAURANT';
-import EDIT_RESTAURANT from '../graphql/mutations/EDIT_RESTAURANT';
+import { useRestaurantsContext } from '../context/RestaurantsContext';
+import { useRestaurantContext } from '../context/RestaurantContext';
+import CommonStyles from '../styles/CommonStyles';
 
 const RestaurantFormScreen = ({ navigation }) => {
-  const { signin } = useAuthContext();
-
-  const item = R.path(['state', 'params', 'item'], navigation);
-  const mutation = item ? EDIT_RESTAURANT : CREATE_RESTAURANT;
-  const [action, { data, loading, error }] = useMutation(mutation);
+  const { restaurantsFetch } = useRestaurantsContext();
+  const {
+    restaurant: item,
+    restaurantFetch,
+    createRestaurant,
+    createRestaurantLoading,
+    createRestaurantSuccess,
+    setCreateRestaurantSuccess,
+    editRestaurant,
+    editRestaurantLoading,
+    editRestaurantSuccess,
+    setEditRestaurantSuccess,
+    error,
+    setError,
+  } = useRestaurantContext();
 
   const onSubmit = ({ name, description }) => {
     if (!item) {
-      action({ variables: { input: { name, description } } });
+      createRestaurant({ name, description });
     } else {
-      const { id } = item;
-      action({ variables: { input: { name, description, id } } });
+      editRestaurant({ name, description });
     }
   };
 
   useEffect(() => {
-    if (data) {
-      const callback = R.path(['state', 'params', 'callback'], navigation);
-      if (callback) {
-        callback();
-      }
+    if (createRestaurantSuccess || editRestaurantSuccess) {
+      restaurantsFetch();
+      restaurantFetch();
+      setCreateRestaurantSuccess();
+      setEditRestaurantSuccess();
       navigation.pop();
     }
-  }, [data]);
+  }, [createRestaurantSuccess, editRestaurantSuccess]);
 
   useEffect(() => {
     if (error) {
-      let message =
+      const message =
         error.message || 'There was a problem with your request, please try again later';
       Alert.alert('Ooops!', message);
+      setError();
     }
   }, [error]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <RestaurantForm onSubmit={onSubmit} loading={loading} item={item} />
+    <SafeAreaView style={CommonStyles.container}>
+      <RestaurantForm
+        onSubmit={onSubmit}
+        loading={createRestaurantLoading || editRestaurantLoading}
+        item={item}
+      />
     </SafeAreaView>
   );
 };
@@ -57,11 +65,5 @@ const RestaurantFormScreen = ({ navigation }) => {
 RestaurantFormScreen.navigationOptions = {
   header: () => false,
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default withNavigation(RestaurantFormScreen);

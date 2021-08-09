@@ -1,45 +1,44 @@
-import React, { useContext, useEffect } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  Text,
-  ActivityIndicator,
-  FlatList,
-  View,
-} from 'react-native';
-import { useQuery, useMutation } from '@apollo/client';
+import React, { useEffect } from 'react';
+import { StyleSheet, SafeAreaView, Alert, Text, FlatList, View } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import * as R from 'ramda';
 
-import CenteringView from '../components/util/CenteringView';
 import Colors from '../styles/Colors';
-import USERS from '../graphql/queries/USERS';
 import FloatingButton from '../components/util/FloatingButton';
-import DELETE_USER from '../graphql/mutations/DELETE_USER';
+import { useUsersContext } from '../context/UsersContext';
+import CommonStyles from '../styles/CommonStyles';
 
 const UsersListScreen = ({ navigation }) => {
-  // MARK: - Mutations & Queries
-  const [deleteUser, { data: deleteUserData, _, error: deleteUserError }] =
-    useMutation(DELETE_USER);
-  const { loading, error, data, refetch } = useQuery(USERS);
+  const {
+    users,
+    usersFetch,
+    deleteUser,
+    deleteUserSuccess,
+    setDeleteUserSuccess,
+    error,
+    setError,
+    usersLoading,
+  } = useUsersContext();
+
   useEffect(() => {
-    if (deleteUserData) {
-      refetch();
+    usersFetch();
+  }, []);
+
+  useEffect(() => {
+    if (deleteUserSuccess) {
+      usersFetch();
       Alert.alert('Success!', 'User has been deleted!');
+      setDeleteUserSuccess();
     }
-  }, [deleteUserData]);
+  }, [deleteUserSuccess]);
 
-  const users = data ? data.users : null;
-
-  // MARK: - Actions
-  const deleteUserAction = (id) => {
-    deleteUser({
-      variables: {
-        id: item.id,
-      },
-    });
-  };
+  useEffect(() => {
+    if (error) {
+      const message =
+        error.message || 'There was a problem with your request, please try again later';
+      Alert.alert('Ooops!', message);
+      setError();
+    }
+  }, [error]);
 
   // MARK: - Render
   const renderItem = ({ item }) => {
@@ -51,37 +50,36 @@ const UsersListScreen = ({ navigation }) => {
         <FloatingButton
           iconName="delete"
           tintColor={Colors.darkFont}
-          onPress={() => deleteUserAction(id)}
+          onPress={() =>
+            deleteUser({
+              id,
+            })
+          }
         />
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={CommonStyles.container}>
       <View style={styles.statusBar}>
-        <Text style={styles.title}>{'Users'}</Text>
+        <Text style={styles.title}>Users</Text>
         <FloatingButton
           iconName="add-circle-outline"
           tintColor={Colors.darkFont}
-          onPress={() => navigation.navigate('UserForm', { callback: refetch })}
+          onPress={() => navigation.navigate('UserForm')}
         />
       </View>
       {users && (
         <FlatList
-          loading={loading}
+          loading={usersLoading}
           data={users}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          style={styles.list}
-          onRefresh={refetch}
-          refreshing={loading}
+          style={CommonStyles.contentContainer}
+          onRefresh={usersFetch}
+          refreshing={usersLoading}
         />
-      )}
-      {loading && !users && (
-        <CenteringView>
-          <ActivityIndicator color={Colors.primary} />
-        </CenteringView>
       )}
     </SafeAreaView>
   );
@@ -92,9 +90,6 @@ UsersListScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   statusBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -124,9 +119,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomColor: Colors.lightGrey,
     borderBottomWidth: 1,
-  },
-  list: {
-    margin: 15,
   },
 });
 

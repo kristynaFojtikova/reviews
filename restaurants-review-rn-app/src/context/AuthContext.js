@@ -1,69 +1,118 @@
+import React, { useEffect, useState, useMemo } from 'react';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import AsyncStorage from '@react-native-community/async-storage';
-import createDataContext from './createDataContext';
+
 import { navigate } from '../util/navigationRef';
-import { clearApolloStore } from '../graphql/client';
+import LOGIN from '../graphql/mutations/LOGIN';
+import REGISTER from '../graphql/mutations/REGISTER';
+import USER from '../graphql/queries/USER';
 
-const authReducer = (state, action) => {
-  switch (action.type) {
-    case 'signin':
-      return {
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
-        user: action.payload.user,
-      };
-    case 'signout':
-      return { accessToken: null, refreshToken: null, user: null };
-    case 'updateUser':
-      return { ...state, user: action.payload };
-    default:
-      return state;
-  }
-};
+export const AuthContext = React.createContext();
 
-const signout = (dispatch) => async () => {
-  await AsyncStorage.removeItem('accessToken');
-  await AsyncStorage.removeItem('refreshToken');
-  dispatch({ type: 'signout' });
-  navigate('authFlow');
-};
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [error, setError] = useState(null);
 
-const updateUser = (dispatch) => (user) => {
-  const { role } = user;
-  console.log('NAVIGATE', role);
-  switch (role) {
-    case 'CUSTOMER':
-      navigate('customerFlow');
-    case 'OWNER':
-      navigate('ownerFlow');
-    case 'ADMIN':
-      navigate('adminFlow');
-    default:
-  }
-  dispatch({ type: 'updateUser', payload: user });
-};
+  const [register, { data: registerData, loading: registerLoading, error: registerError }] =
+    useMutation(REGISTER);
+  const [login, { data: loginData, loading: loginLoading, error: loginError }] = useMutation(LOGIN);
 
-const signin =
-  (dispatch) =>
-  async ({ accessToken, refreshToken, user }) => {
-    await AsyncStorage.setItem('accessToken', accessToken);
-    await AsyncStorage.setItem('refreshToken', refreshToken);
-
+  const navigateUserIntoApp = async (user) => {
     const { role } = user;
-    console.log('NAVIGATE', role);
     switch (role) {
       case 'CUSTOMER':
         navigate('customerFlow');
+        break;
       case 'OWNER':
         navigate('ownerFlow');
+        break;
       case 'ADMIN':
         navigate('adminFlow');
+        break;
       default:
     }
-    dispatch({ type: 'signin', payload: { accessToken, refreshToken, user } });
   };
 
-export const { Provider: AuthProvider, Context: AuthContext } = createDataContext(
-  authReducer,
-  { signout, signin, updateUser },
-  { accessToken: null, refreshToken: null, user: null }
-);
+  const persistTokens = async ({ accessToken, refreshToken }) => {
+    console.log('SAVE TOKENS');
+    await AsyncStorage.setItem('accessToken', accessToken);
+    await AsyncStorage.setItem('refreshToken', refreshToken);
+  };
+
+  const [userFetch] = useLazyQuery(USER, {
+    onCompleted: async (res) => {
+      if (res) {
+        const { user: newUser } = res;
+        setUser(newUser);
+        navigateUserIntoApp(newUser);
+      } else {
+        navigate('authFlow');
+      }
+    },
+    onError: () => navigate('authFlow'),
+  });
+
+  useEffect(() => {
+    if (registerData) {
+      const { user: newUser, message, accessToken, refreshToken } = registerData.register;
+      if (message) {
+        setError({ message });
+      } else if (newUser && accessToken && refreshToken) {
+        setUser(newUser);
+        setRefreshToken(refreshToken);
+        persistTokens({ accessToken, refreshToken });
+        navigateUserIntoApp(newUser);
+      }
+    }
+  }, [registerData]);
+
+  useEffect(() => {
+    if (loginData) {
+      const { user: newUser, message, accessToken, refreshToken } = loginData.login;
+      if (message) {
+        setError({ message });
+      } else if (newUser && accessToken && refreshToken) {
+        setUser(newUser);
+        setRefreshToken(refreshToken);
+        persistTokens({ accessToken, refreshToken });
+        navigateUserIntoApp(newUser);
+      }
+    }
+  }, [loginData]);
+
+  useEffect(() => {
+    const anyError = loginError || registerError;
+    if (anyError) {
+      setError(anyError);
+    } else if (error) {
+      setError(null);
+    }
+  }, [loginError, registerError]);
+
+  const values = useMemo(
+    () => ({
+      userFetch,
+      login,
+      loginLoading,
+      register,
+      registerLoading,
+      user,
+      refreshToken,
+      error,
+      setError,
+    }),
+    [userFetch, login, loginLoading, register, registerLoading, user, refreshToken, error, setError]
+  );
+
+  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
+};
+
+export const useAuthContext = () => {
+  const context = React.useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error('`DataHook` hook must be used within a `DataProvider` component');
+  }
+  return context;
+};
