@@ -17,6 +17,7 @@ const UsersListScreen = ({ navigation }) => {
     error,
     setError,
     usersLoading,
+    setUser,
   } = useUsersContext();
 
   useEffect(() => {
@@ -51,7 +52,10 @@ const UsersListScreen = ({ navigation }) => {
           iconName="edit"
           tintColor={Colors.darkFont}
           size={25}
-          onPress={() => navigation.navigate('UserForm')}
+          onPress={() => {
+            setUser(item);
+            navigation.navigate('UserForm');
+          }}
         />
         <FloatingButton
           iconName="person-remove"
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontSize: 10,
     fontWeight: '400',
-    flex: 1,
+    flex: 0.5,
     color: Colors.primary,
   },
   row: {

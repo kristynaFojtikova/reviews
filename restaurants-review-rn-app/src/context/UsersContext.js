@@ -4,6 +4,7 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import USERS from '../graphql/queries/USERS';
 import DELETE_USER from '../graphql/mutations/DELETE_USER';
 import REGISTER from '../graphql/mutations/REGISTER';
+import EDIT_USER from '../graphql/mutations/EDIT_USER';
 
 export const UsersContext = React.createContext();
 
@@ -13,6 +14,8 @@ export const UsersProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [deleteUserSuccess, setDeleteUserSuccess] = useState(null);
   const [createUserData, setCreateUserData] = useState(null);
+  const [editUserSuccess, setEditUserSuccess] = useState(null);
+  const [user, setUser] = useState(null);
 
   const [usersFetch, { loading: usersLoading }] = useLazyQuery(USERS, {
     fetchPolicy: 'network-only',
@@ -30,10 +33,16 @@ export const UsersProvider = ({ children }) => {
 
   const [createUserMutation, { loading: createUserLoading }] = useMutation(REGISTER, {
     onError: (e) => {
-      console.log('jdkasljdskl');
       setError(e);
     },
     onCompleted: (data) => setCreateUserData(data),
+  });
+
+  const [editUserMutation, { loading: editUserLoading }] = useMutation(EDIT_USER, {
+    onError: (e) => {
+      setError(e);
+    },
+    onCompleted: () => setEditUserSuccess(true),
   });
 
   const deleteUser = ({ id }) => {
@@ -43,9 +52,14 @@ export const UsersProvider = ({ children }) => {
   };
 
   const createUser = ({ email, password, role }) => {
-    console.log('CREATE', email, password, role);
     createUserMutation({
       variables: { input: { email, password, role } },
+    });
+  };
+
+  const editUser = ({ email, password, role }) => {
+    editUserMutation({
+      variables: { input: { email, password, role, id: user.id } },
     });
   };
 
@@ -62,6 +76,12 @@ export const UsersProvider = ({ children }) => {
       createUserLoading,
       createUserData,
       setCreateUserData,
+      user,
+      setUser,
+      editUser,
+      editUserLoading,
+      editUserSuccess,
+      setEditUserSuccess,
       error,
       setError,
     }),
@@ -77,6 +97,12 @@ export const UsersProvider = ({ children }) => {
       createUserLoading,
       createUserData,
       setCreateUserData,
+      user,
+      setUser,
+      editUser,
+      editUserLoading,
+      editUserSuccess,
+      setEditUserSuccess,
       error,
       setError,
     ]

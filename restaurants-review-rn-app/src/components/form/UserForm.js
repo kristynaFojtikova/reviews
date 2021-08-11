@@ -8,10 +8,10 @@ import CheckmarkInput from './CheckmarkInput';
 import FormInput from './FormInput';
 import LinkButton from '../util/LinkButton';
 
-const UserForm = ({ onSubmit, loading, admin, navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('CUSTOMER');
+const UserForm = ({ onSubmit, loading, admin, navigation, user }) => {
+  const [email, setEmail] = useState(user ? user.email : '');
+  const [password, setPassword] = useState(user ? user.password : '');
+  const [role, setRole] = useState(user ? user.role : 'CUSTOMER');
 
   const [emailError, setEmailError] = useState();
   const [passwordError, setPasswordError] = useState();
@@ -67,8 +67,8 @@ const UserForm = ({ onSubmit, loading, admin, navigation }) => {
 
   return (
     <Form
-      headerText={admin ? 'Create a user' : 'Create an account'}
-      submitButtonText="Create"
+      headerText={admin ? (user ? 'Edit user' : 'Create a user') : 'Create an account'}
+      submitButtonText={user ? 'Save' : 'Create'}
       buttonIcon="rowing"
       onSubmit={onSubmitPressed}
       loading={loading}

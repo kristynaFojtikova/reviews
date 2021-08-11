@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
+import { withNavigation } from 'react-navigation';
 
 import Colors from '../../styles/Colors';
 import StarsRow from '../util/StarsRow';
@@ -8,8 +9,9 @@ import Button from '../util/Button';
 import getAverageRatingFor from '../../util/getAverageRatingFor';
 import CommonStyles from '../../styles/CommonStyles';
 import { useRestaurantContext } from '../../context/RestaurantContext';
+import Spacer from '../util/Spacer';
 
-const AdminRestaurantDetail = () => {
+const AdminRestaurantDetail = ({ navigation }) => {
   const { restaurant, deleteRestaurant, deleteRestaurantLoading } = useRestaurantContext();
 
   const { reviews } = restaurant;
@@ -34,6 +36,13 @@ const AdminRestaurantDetail = () => {
       )}
       <View style={CommonStyles.contentContainer}>
         <Button
+          text="Edit restaurant"
+          iconName="edit"
+          color={Colors.primary}
+          onPress={() => navigation.navigate('RestaurantForm')}
+        />
+        <Spacer />
+        <Button
           text="Delete restaurant"
           iconName="warning"
           color={Colors.darkFont}
@@ -45,4 +54,4 @@ const AdminRestaurantDetail = () => {
   );
 };
 
-export default AdminRestaurantDetail;
+export default withNavigation(AdminRestaurantDetail);

@@ -16,6 +16,11 @@ const UserFormScreen = ({ navigation }) => {
     error,
     setError,
     usersFetch,
+    editUser,
+    editUserLoading,
+    editUserSuccess,
+    setEditUserSuccess,
+    user,
   } = useUsersContext();
 
   useEffect(() => {
@@ -33,6 +38,14 @@ const UserFormScreen = ({ navigation }) => {
   }, [createUserData]);
 
   useEffect(() => {
+    if (editUserSuccess) {
+      usersFetch();
+      navigation.pop();
+      setEditUserSuccess();
+    }
+  }, [editUserSuccess]);
+
+  useEffect(() => {
     if (error) {
       const message =
         error.message || 'There was a problem with your request, please try again later';
@@ -43,7 +56,12 @@ const UserFormScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={CommonStyles.container}>
-      <UserForm onSubmit={createUser} loading={createUserLoading} admin />
+      <UserForm
+        onSubmit={user ? editUser : createUser}
+        loading={user ? editUserLoading : createUserLoading}
+        admin
+        user={user}
+      />
       <Spacer />
     </SafeAreaView>
   );
