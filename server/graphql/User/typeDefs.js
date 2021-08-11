@@ -44,6 +44,13 @@ const typeDefs = gql`
     password: String!
   }
 
+  input EditUserInput {
+    id: ID!
+    email: String
+    role: UserRole
+    password: String
+  }
+
   input LoginInput {
     email: String!
     password: String!
@@ -75,6 +82,7 @@ const typeDefs = gql`
     register(input: RegisterInput!): AuthResponse
     refreshToken(refreshToken: String!): AuthResponse
     deleteUser(id: ID): User
+    editUser(input: EditUserInput): User
   }
 `;
 

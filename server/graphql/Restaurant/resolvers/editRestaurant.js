@@ -1,3 +1,4 @@
+const { AuthenticationError, ForbiddenError } = require("apollo-server");
 const Joi = require("joi");
 
 const validateUser = require("../../util/validateUser");
@@ -11,16 +12,19 @@ const argsSchema = Joi.object({
 const editRestaurant = async (root, { input }, { models, user }) => {
   Joi.assert(input, argsSchema);
 
-  const { role, userId } = validateUser(user, /OWNER/g);
+  const { role, userId } = validateUser(user, /OWNER|ADMIN/g);
 
   const { name, description, id } = input;
 
   const restaurant = await models.Restaurant.findOne({
     where: {
       id,
-      ownerId: userId,
     },
   });
+
+  if (role === "OWNER" && restaurant.ownerId !== userId) {
+    throw ForbiddenError;
+  }
 
   if (!restaurant) {
     throw new Error("Unable to find your restaurant");

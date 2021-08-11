@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const deleteUser = require("./deleteUser");
+const edit = require("./edit");
 
 const login = require("./login");
 const logout = require("./logout");
@@ -46,6 +47,7 @@ const resolvers = {
     refreshToken,
     deleteUser,
     logout,
+    editUser: edit,
   },
 };
 
