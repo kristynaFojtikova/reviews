@@ -15,3 +15,9 @@ Navigate to `/server` and run `yarn` and `node index.js` to start the local serv
 Navigate to `/restaurants-review-rn-app` and run `yarn` to install node-modules and `cd ios && pod install`.
 
 Run `yarn start` and then `yarn ios` or `yarn android` depending on which devices & simulators you have available.
+
+![alt text](./screenshots/2.png)
+![alt text](./screenshots/3.png)
+![alt text](./screenshots/4.png)
+![alt text](./screenshots/1.png)
+![alt text](./screenshots/5.png)
