@@ -1,7 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, View } from 'react-native';
-import Colors from '../../styles/Colors';
+import { TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
+import Colors from '../../styles/Colors';
 
 const FloatingButton = ({
   disabled,
@@ -10,22 +10,21 @@ const FloatingButton = ({
   onPress,
   color,
   tintColor = Colors.lightFont,
-}) => {
-  return (
-    <TouchableOpacity
-      style={
-        disabled
-          ? { ...styles.container, ...styles.disabledContainer, backgroundColor: color }
-          : { ...styles.container, backgroundColor: color }
-      }
-      onPress={onPress}
-      disabled={disabled}
-    >
-      {loading && <ActivityIndicator color={tintColor} />}
-      {!loading && <Icon name={iconName} color={tintColor} size={40} />}
-    </TouchableOpacity>
-  );
-};
+  size = 40,
+}) => (
+  <TouchableOpacity
+    style={
+      disabled
+        ? { ...styles.container, ...styles.disabledContainer, backgroundColor: color }
+        : { ...styles.container, backgroundColor: color }
+    }
+    onPress={onPress}
+    disabled={disabled}
+  >
+    {loading && <ActivityIndicator color={tintColor} />}
+    {!loading && <Icon name={iconName} color={tintColor} size={size} />}
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   container: {

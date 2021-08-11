@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity, FlatList } from 'react-native';
-import * as R from 'ramda';
-import { Icon } from 'react-native-elements';
-import Colors from '../styles/Colors';
-import ImagesScroller from './ImagesScroller';
-import StarsRow from './StarsRow';
-import getAverageRatingFor from '../util/getAverageRatingFor';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+
+import Colors from '../../styles/Colors';
+import ImagesScroller from '../util/ImagesScroller';
+import StarsRow from '../util/StarsRow';
+import getAverageRatingFor from '../../util/getAverageRatingFor';
 
 const RestaurantCell = ({ item, onPress }) => {
   const { id, name, description, reviews } = item;

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Alert } from 'react-native';
-import { useMutation } from '@apollo/client';
+import { View, StyleSheet, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { format } from 'date-fns';
 
-import Colors from '../styles/Colors';
-import Button from './util/Button';
-import Spacer from './util/Spacer';
-import FormInput from './form/FormInput';
-import { useAuthContext } from '../context/AuthContext';
-import userDetailsHandle from '../util/userDetailsHandle';
-import { useRestaurantContext } from '../context/RestaurantContext';
+import Colors from '../../styles/Colors';
+import Button from '../util/Button';
+import Spacer from '../util/Spacer';
+import FormInput from '../form/FormInput';
+import { useAuthContext } from '../../context/AuthContext';
+import userDetailsHandle from '../../util/userDetailsHandle';
+import { useRestaurantContext } from '../../context/RestaurantContext';
 
 const ReviewCell = ({ item }) => {
   // MARK: - Hooks & local state

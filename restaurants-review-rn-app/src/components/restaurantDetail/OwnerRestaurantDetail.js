@@ -3,8 +3,8 @@ import { Text, View } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import Colors from '../../styles/Colors';
-import StarsRow from '../StarsRow';
-import ReviewsList from '../ReviewsList';
+import StarsRow from '../util/StarsRow';
+import ReviewsList from '../review/ReviewsList';
 import Button from '../util/Button';
 import Spacer from '../util/Spacer';
 import getAverageRatingFor from '../../util/getAverageRatingFor';

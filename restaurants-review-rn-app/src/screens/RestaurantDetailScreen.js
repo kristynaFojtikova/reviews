@@ -1,22 +1,13 @@
 import React, { useEffect } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  Text,
-  ActivityIndicator,
-  ScrollView,
-  FlatList,
-} from 'react-native';
+import { StyleSheet, SafeAreaView, Alert, Text, ActivityIndicator, FlatList } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import Colors from '../styles/Colors';
-import ImagesScroller from '../components/ImagesScroller';
+import ImagesScroller from '../components/util/ImagesScroller';
 import CenteringView from '../components/util/CenteringView';
 import RestaurantDetail from '../components/restaurantDetail';
 import { useRestaurantsContext } from '../context/RestaurantsContext';
 import { useRestaurantContext } from '../context/RestaurantContext';
-import Button from '../components/util/Button';
 
 const RestaurantDetailScreen = ({ navigation }) => {
   const { restaurantsFetch } = useRestaurantsContext();
@@ -81,7 +72,7 @@ const RestaurantDetailScreen = ({ navigation }) => {
         ListHeaderComponent={() => (
           <>
             <Text style={styles.title}>{name}</Text>
-            <ImagesScroller id={id} />
+            <ImagesScroller id={id} grand />
             <Text style={styles.description}>{description}</Text>
             <RestaurantDetail />
           </>

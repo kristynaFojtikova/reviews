@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-import { emailRegex, passwordRegex } from '../util/regex';
-import Form from './form/Form';
-import FormInput from './form/FormInput';
-import Button from './util/Button';
-import LinkButton from './util/LinkButton';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { withNavigation } from 'react-navigation';
+import { emailRegex } from '../../util/regex';
+import Form from './Form';
+import FormInput from './FormInput';
+import LinkButton from '../util/LinkButton';
 
-const LoginForm = ({ onSubmit, loading }) => {
+const LoginForm = ({ onSubmit, loading, navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -57,9 +58,15 @@ const LoginForm = ({ onSubmit, loading }) => {
       buttonIcon="rowing"
       onSubmit={onSubmitPressed}
       loading={loading}
+      footer={() => (
+        <LinkButton
+          text="Don't have an account? Register"
+          onPress={() => navigation.navigate('Register')}
+        />
+      )}
     >
       <FormInput
-        label={'Email'}
+        label="Email"
         value={email}
         setValue={setEmail}
         error={emailError}
@@ -67,7 +74,7 @@ const LoginForm = ({ onSubmit, loading }) => {
         placeholder="customer@grr.la"
       />
       <FormInput
-        label={'Password'}
+        label="Password"
         secureTextEntry
         value={password}
         setValue={setPassword}
@@ -104,4 +111,4 @@ const LoginForm = ({ onSubmit, loading }) => {
   );
 };
 
-export default LoginForm;
+export default withNavigation(LoginForm);

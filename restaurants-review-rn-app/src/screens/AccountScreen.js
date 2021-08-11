@@ -1,40 +1,22 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Text } from 'react-native';
-import { useMutation } from '@apollo/client';
+import React from 'react';
+import { StyleSheet, SafeAreaView, Text, Alert } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import * as R from 'ramda';
 
 import Spacer from '../components/util/Spacer';
 import Button from '../components/util/Button';
-import LOGOUT from '../graphql/mutations/LOGOUT';
 import Colors from '../styles/Colors';
 import { useAuthContext } from '../context/AuthContext';
 
 import { clearApolloStore } from '../graphql/client';
 
 const AccountScreen = ({ navigation }) => {
-  const { user, refreshToken } = useAuthContext();
-
-  // const [performLogout, { data, loading, error }] = useMutation(LOGOUT);
+  const { user, logout, logoutLoading, error, setError } = useAuthContext();
 
   const onLogout = () => {
     clearApolloStore();
-    navigation.navigate('authFlow');
-    // signout();
-    // performLogout({ variables: { refreshToken } });
+    logout();
   };
-
-  const loading = false;
-
-  // useEffect(() => {
-  //   if (data) {
-  //     const { logout: success } = data;
-  //     if (success) {
-  //       // clearApolloStore();
-  //       // signout();
-  //     }
-  //   }
-  // }, [data, error]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,7 +28,7 @@ const AccountScreen = ({ navigation }) => {
         text="Logout"
         iconName="logout"
         onPress={onLogout}
-        loading={loading}
+        loading={logoutLoading}
         color={Colors.darkFont}
       />
     </SafeAreaView>

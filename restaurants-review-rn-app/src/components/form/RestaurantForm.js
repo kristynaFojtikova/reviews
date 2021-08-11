@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import * as R from 'ramda';
 
-import { nameRegex, descriptionRegex } from '../util/regex';
-import Form from './form/Form';
-import CheckmarkInput from './form/CheckmarkInput';
-import FormInput from './form/FormInput';
-import Button from './util/Button';
+import { nameRegex, descriptionRegex } from '../../util/regex';
+import Form from './Form';
+import CheckmarkInput from './CheckmarkInput';
+import FormInput from './FormInput';
+import Button from '../util/Button';
 
 const RestaurantForm = ({ onSubmit, loading, item }) => {
   const [name, setName] = useState(R.prop('name', item) || `John's`);
@@ -33,7 +33,7 @@ const RestaurantForm = ({ onSubmit, loading, item }) => {
     if (!formValid()) {
       return;
     }
-    onSubmit({ name: name, description });
+    onSubmit({ name, description });
   };
 
   return (
@@ -44,13 +44,13 @@ const RestaurantForm = ({ onSubmit, loading, item }) => {
       loading={loading}
     >
       <FormInput
-        label={'Restaurant Name'}
+        label="Restaurant Name"
         value={name}
         setValue={setName}
         error={nameError}
         validate={validateName}
       />
-      <FormInput label={'Description'} value={description} setValue={setDescription} />
+      <FormInput label="Description" value={description} setValue={setDescription} />
     </Form>
   );
 };

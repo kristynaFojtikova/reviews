@@ -6,6 +6,7 @@ import { navigate } from '../util/navigationRef';
 import LOGIN from '../graphql/mutations/LOGIN';
 import REGISTER from '../graphql/mutations/REGISTER';
 import USER from '../graphql/queries/USER';
+import LOGOUT from '../graphql/mutations/LOGOUT';
 
 export const AuthContext = React.createContext();
 
@@ -13,10 +14,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [error, setError] = useState(null);
-
-  const [register, { data: registerData, loading: registerLoading, error: registerError }] =
-    useMutation(REGISTER);
-  const [login, { data: loginData, loading: loginLoading, error: loginError }] = useMutation(LOGIN);
 
   const navigateUserIntoApp = async (user) => {
     const { role } = user;
@@ -40,6 +37,55 @@ export const AuthProvider = ({ children }) => {
     await AsyncStorage.setItem('refreshToken', refreshToken);
   };
 
+  const [register, { loading: registerLoading }] = useMutation(REGISTER, {
+    onError: setError,
+    onCompleted: (data) => {
+      const { user: newUser, message, accessToken, refreshToken } = data.register;
+      if (message) {
+        setError({ message });
+      } else if (newUser && accessToken && refreshToken) {
+        setUser(newUser);
+        setRefreshToken(refreshToken);
+        persistTokens({ accessToken, refreshToken });
+        navigateUserIntoApp(newUser);
+      }
+    },
+  });
+  const [login, { loading: loginLoading }] = useMutation(LOGIN, {
+    onError: setError,
+    onCompleted: (data) => {
+      const { user: newUser, message, accessToken, refreshToken } = data.login;
+      if (message) {
+        setError({ message });
+      } else if (newUser && accessToken && refreshToken) {
+        setUser(newUser);
+        setRefreshToken(refreshToken);
+        persistTokens({ accessToken, refreshToken });
+        navigateUserIntoApp(newUser);
+      }
+    },
+  });
+  const [logoutMutation, { loading: logoutLoading }] = useMutation(LOGOUT, {
+    onError: setError,
+    onCompleted: async () => {
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      navigate('authFlow');
+    },
+  });
+
+  const logout = async () => {
+    console.log('LOUGOUT');
+    const refresh = await AsyncStorage.getItem('refreshToken');
+
+    console.log('refresh', refresh);
+    logoutMutation({
+      variables: {
+        refreshToken: refresh,
+      },
+    });
+  };
+
   const [userFetch] = useLazyQuery(USER, {
     onCompleted: async (res) => {
       if (res) {
@@ -53,43 +99,6 @@ export const AuthProvider = ({ children }) => {
     onError: () => navigate('authFlow'),
   });
 
-  useEffect(() => {
-    if (registerData) {
-      const { user: newUser, message, accessToken, refreshToken } = registerData.register;
-      if (message) {
-        setError({ message });
-      } else if (newUser && accessToken && refreshToken) {
-        setUser(newUser);
-        setRefreshToken(refreshToken);
-        persistTokens({ accessToken, refreshToken });
-        navigateUserIntoApp(newUser);
-      }
-    }
-  }, [registerData]);
-
-  useEffect(() => {
-    if (loginData) {
-      const { user: newUser, message, accessToken, refreshToken } = loginData.login;
-      if (message) {
-        setError({ message });
-      } else if (newUser && accessToken && refreshToken) {
-        setUser(newUser);
-        setRefreshToken(refreshToken);
-        persistTokens({ accessToken, refreshToken });
-        navigateUserIntoApp(newUser);
-      }
-    }
-  }, [loginData]);
-
-  useEffect(() => {
-    const anyError = loginError || registerError;
-    if (anyError) {
-      setError(anyError);
-    } else if (error) {
-      setError(null);
-    }
-  }, [loginError, registerError]);
-
   const values = useMemo(
     () => ({
       userFetch,
@@ -97,12 +106,26 @@ export const AuthProvider = ({ children }) => {
       loginLoading,
       register,
       registerLoading,
+      logout,
+      logoutLoading,
       user,
       refreshToken,
       error,
       setError,
     }),
-    [userFetch, login, loginLoading, register, registerLoading, user, refreshToken, error, setError]
+    [
+      userFetch,
+      login,
+      loginLoading,
+      register,
+      registerLoading,
+      logout,
+      logoutLoading,
+      user,
+      refreshToken,
+      error,
+      setError,
+    ]
   );
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

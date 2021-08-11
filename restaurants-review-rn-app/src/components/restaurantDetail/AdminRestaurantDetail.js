@@ -1,10 +1,9 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
-import * as R from 'ramda';
 
 import Colors from '../../styles/Colors';
-import StarsRow from '../StarsRow';
-import ReviewsList from '../ReviewsList';
+import StarsRow from '../util/StarsRow';
+import ReviewsList from '../review/ReviewsList';
 import Button from '../util/Button';
 import getAverageRatingFor from '../../util/getAverageRatingFor';
 import CommonStyles from '../../styles/CommonStyles';

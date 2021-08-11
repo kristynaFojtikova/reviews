@@ -48,8 +48,15 @@ const UsersListScreen = ({ navigation }) => {
         <Text style={styles.subtitle}>{item.email}</Text>
         <Text style={styles.text}>{item.role}</Text>
         <FloatingButton
-          iconName="delete"
+          iconName="edit"
           tintColor={Colors.darkFont}
+          size={25}
+          onPress={() => navigation.navigate('UserForm')}
+        />
+        <FloatingButton
+          iconName="person-remove"
+          tintColor={Colors.darkFont}
+          size={25}
           onPress={() =>
             deleteUser({
               id,

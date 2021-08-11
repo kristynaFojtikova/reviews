@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, Alert } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
-import UserForm from '../components/UserForm';
+import UserForm from '../components/form/UserForm';
 import Spacer from '../components/util/Spacer';
 import { useUsersContext } from '../context/UsersContext';
 import CommonStyles from '../styles/CommonStyles';

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, Text, View } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, Alert } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import Colors from '../styles/Colors';
 import FloatingButton from '../components/util/FloatingButton';
 import { useRestaurantsContext } from '../context/RestaurantsContext';
 import { useRestaurantContext } from '../context/RestaurantContext';
-import RestaurantsList from '../components/RestaurantsList';
+import RestaurantsList from '../components/restaurant/RestaurantsList';
 import CommonStyles from '../styles/CommonStyles';
 import { useAuthContext } from '../context/AuthContext';
 import userDetailsHandle from '../util/userDetailsHandle';
@@ -14,7 +14,8 @@ import userDetailsHandle from '../util/userDetailsHandle';
 const RestaurantListScreen = ({ navigation }) => {
   const {
     restaurants,
-    restaurantsError: error,
+    error,
+    setError,
     restaurantsFetch: fetch,
     restaurantsLoading: loading,
     starFilter,
@@ -29,6 +30,15 @@ const RestaurantListScreen = ({ navigation }) => {
 
   const { user } = useAuthContext();
   const { isOwner } = userDetailsHandle(user);
+
+  useEffect(() => {
+    if (error) {
+      const message =
+        error.message || 'There was a problem with your request, please try again later';
+      Alert.alert('Ooops!', message);
+      setError();
+    }
+  }, [error]);
 
   const onPress = (id) => {
     setRestaurantId(id);

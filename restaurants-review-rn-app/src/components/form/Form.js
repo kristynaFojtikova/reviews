@@ -1,24 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import Colors from '../../styles/Colors';
-import { emailRegex } from '../../util/regex';
-import CheckmarkInput from './CheckmarkInput';
-import FormInput from './FormInput';
+
 import Button from '../util/Button';
-import LinkButton from '../util/LinkButton';
 import Spacer from '../util/Spacer';
 
-const Form = ({ headerText, submitButtonText, buttonIcon, onSubmit, children, loading }) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{headerText}</Text>
-      <Spacer height={30} />
-      {children}
-      <Spacer />
-      <Button text={submitButtonText} onPress={onSubmit} loading={loading} iconName={buttonIcon} />
-    </View>
-  );
-};
+const Form = ({
+  headerText,
+  submitButtonText,
+  buttonIcon,
+  onSubmit,
+  children,
+  loading,
+  footer,
+}) => (
+  <View style={styles.container}>
+    <Text style={styles.title}>{headerText}</Text>
+    <Spacer height={30} />
+    {children}
+    <Spacer />
+    <Button text={submitButtonText} onPress={onSubmit} loading={loading} iconName={buttonIcon} />
+    {footer && footer()}
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {

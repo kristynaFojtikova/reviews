@@ -1,11 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Colors from '../../styles/Colors';
 
 const LinkButton = ({ disabled, text, onPress, color = Colors.primary }) => {
-  const content = () => {
-    return <Text style={{ ...styles.text, color }}>{text}</Text>;
-  };
+  const content = () => <Text style={{ ...styles.text, color }}>{text}</Text>;
 
   return (
     <TouchableOpacity

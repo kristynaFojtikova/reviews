@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, Alert } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
-import RestaurantForm from '../components/RestaurantForm';
+import RestaurantForm from '../components/form/RestaurantForm';
 import { useRestaurantsContext } from '../context/RestaurantsContext';
 import { useRestaurantContext } from '../context/RestaurantContext';
 import CommonStyles from '../styles/CommonStyles';

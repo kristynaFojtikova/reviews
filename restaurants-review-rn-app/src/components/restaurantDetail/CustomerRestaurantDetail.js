@@ -2,10 +2,10 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import * as R from 'ramda';
 
-import StarsRow from '../StarsRow';
-import ReviewCell from '../ReviewCell';
-import ReviewsList from '../ReviewsList';
-import CreateReviewBox from '../CreateReviewBox';
+import StarsRow from '../util/StarsRow';
+import ReviewCell from '../review/ReviewCell';
+import ReviewsList from '../review/ReviewsList';
+import CreateReviewBox from '../review/CreateReviewBox';
 import getAverageRatingFor from '../../util/getAverageRatingFor';
 import { useRestaurantContext } from '../../context/RestaurantContext';
 import CommonStyles from '../../styles/CommonStyles';

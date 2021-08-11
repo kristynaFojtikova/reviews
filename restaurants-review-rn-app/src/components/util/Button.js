@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, View } from 'react-native';
-import Colors from '../../styles/Colors';
 import { Icon } from 'react-native-elements';
+import Colors from '../../styles/Colors';
 
 const Button = ({ disabled, loading, text, iconName, onPress, color = Colors.primary }) => {
   const content = () => {

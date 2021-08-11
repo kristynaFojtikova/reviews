@@ -3,7 +3,7 @@ import { SafeAreaView, Alert, ImageBackground } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import LinkButton from '../components/util/LinkButton';
-import LoginForm from '../components/LoginForm';
+import LoginForm from '../components/form/LoginForm';
 import Spacer from '../components/util/Spacer';
 import SampleImages from '../util/sampleImages';
 import Colors from '../styles/Colors';
@@ -26,18 +26,13 @@ const SignInScreen = ({ navigation }) => {
     }
   }, [error]);
 
-  const img = SampleImages[28];
+  const img = SampleImages[36];
 
   return (
     <ImageBackground source={img} style={CommonStyles.container}>
       <SafeAreaView style={CommonStyles.container}>
         <LoginForm onSubmit={onSubmit} loading={loading} />
         <Spacer />
-        <LinkButton
-          text="Don't have an account? Register"
-          onPress={() => navigation.navigate('Register')}
-          color={Colors.darkFont}
-        />
       </SafeAreaView>
     </ImageBackground>
   );

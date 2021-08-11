@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { StyleSheet, Image, FlatList } from 'react-native';
-import Colors from '../styles/Colors';
 import * as R from 'ramda';
-import SampleImages from '../util/sampleImages';
+import SampleImages from '../../util/sampleImages';
 
 const ImagesScroller = ({ id, grand }) => {
   const randomIndex = () => Math.floor(Math.random() * (33 - 0) + 0);
@@ -20,10 +19,10 @@ const ImagesScroller = ({ id, grand }) => {
   return (
     <>
       <FlatList
-        style={styles.list}
+        style={listStyle}
         data={images}
         renderItem={({ item: imgSrc }) => (
-          <Image style={styles.image} source={imgSrc} resizeMode="contain" resizeMethod="resize" />
+          <Image style={imageStyle} source={imgSrc} resizeMode="contain" resizeMethod="resize" />
         )}
         horizontal
         keyExtractor={(_, index) => id + index}
@@ -35,21 +34,30 @@ const ImagesScroller = ({ id, grand }) => {
 
 const styles = StyleSheet.create({
   list: {
-    height: 230,
+    height: 200,
   },
   image: {
-    height: 230,
-    width: 230,
+    height: 200,
+    width: 200,
     margin: 1.5,
   },
   grandList: {
-    height: 340,
+    height: 300,
   },
   grandImage: {
-    height: 340,
-    width: 340,
+    height: 300,
+    width: 300,
     margin: 1.5,
   },
 });
+
+// const ImagesScroller = memo(
+//   (props) => <PlainImagesScroller {...props} />,
+//   (oldProps, newProps) => {
+//     const idSame = oldProps.id === newProps.id;
+//     // const grandSame = oldProps.grand === newProps.grand;
+//     return true;
+//   }
+// );
 
 export default ImagesScroller;

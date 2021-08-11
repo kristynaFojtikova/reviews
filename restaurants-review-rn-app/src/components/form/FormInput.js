@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, TextInput } from 'react-native';
+import React from 'react';
+import { Text, StyleSheet, View, TextInput } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 import Colors from '../../styles/Colors';
@@ -14,28 +14,26 @@ const FormInput = ({
   validate,
   tintColor,
   placeholder,
-}) => {
-  return (
-    <View style={disabled ? { ...styles.container, ...styles.disabled } : styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <TextInput
-        editable={!disabled}
-        secureTextEntry={secureTextEntry}
-        style={tintColor ? { ...styles.input, borderBottomColor: tintColor } : styles.input}
-        value={value}
-        onChangeText={(text) => setValue(text)}
-        onEndEditing={validate}
-        placeholder={placeholder}
-      />
-      {error && (
-        <View style={styles.errorContainer}>
-          <Icon name={'warning'} color={Colors.error} />
-          <Text style={styles.error}>{error}</Text>
-        </View>
-      )}
-    </View>
-  );
-};
+}) => (
+  <View style={disabled ? { ...styles.container, ...styles.disabled } : styles.container}>
+    {label && <Text style={styles.label}>{label}</Text>}
+    <TextInput
+      editable={!disabled}
+      secureTextEntry={secureTextEntry}
+      style={tintColor ? { ...styles.input, borderBottomColor: tintColor } : styles.input}
+      value={value}
+      onChangeText={(text) => setValue(text)}
+      onEndEditing={validate}
+      placeholder={placeholder}
+    />
+    {error && (
+      <View style={styles.errorContainer}>
+        <Icon name="warning" color={Colors.error} />
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    )}
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {

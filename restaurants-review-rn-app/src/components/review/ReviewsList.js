@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, FlatList, View } from 'react-native';
-import Colors from '../styles/Colors';
+import { StyleSheet, FlatList } from 'react-native';
+import Colors from '../../styles/Colors';
 import ReviewCell from './ReviewCell';
-import Spacer from './util/Spacer';
 
 const ReviewsList = ({ reviews }) => (
   <>

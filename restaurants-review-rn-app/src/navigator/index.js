@@ -1,6 +1,6 @@
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+
 import AccountScreen from '../screens/AccountScreen';
 import RestaurantFormScreen from '../screens/RestaurantFormScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -10,6 +10,7 @@ import SignInScreen from '../screens/SignInScreen';
 import UsersListScreen from '../screens/UsersListScreen';
 import UserFormScreen from '../screens/UserFormScreen';
 import LandingScreen from '../screens/LandingScreen';
+import createCofiguredBottomTabBar from './bottomTabBarConfig';
 
 const restaurantStackNavigator = createStackNavigator({
   RestaurantList: RestaurantListScreen,
@@ -28,16 +29,16 @@ const navigator = createSwitchNavigator({
     Signin: SignInScreen,
     Register: RegisterScreen,
   }),
-  customerFlow: createBottomTabNavigator({
+  customerFlow: createCofiguredBottomTabBar({
     Restaurants: restaurantStackNavigator,
     Account: AccountScreen,
   }),
-  adminFlow: createBottomTabNavigator({
+  adminFlow: createCofiguredBottomTabBar({
     Restaurants: restaurantStackNavigator,
     Users: userStackNavigator,
     Account: AccountScreen,
   }),
-  ownerFlow: createBottomTabNavigator({
+  ownerFlow: createCofiguredBottomTabBar({
     Restaurants: restaurantStackNavigator,
     Account: AccountScreen,
   }),

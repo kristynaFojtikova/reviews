@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, Alert, ImageBackground } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
-import UserForm from '../components/UserForm';
+import UserForm from '../components/form/UserForm';
 import LinkButton from '../components/util/LinkButton';
 import Spacer from '../components/util/Spacer';
 import SampleImages from '../util/sampleImages';
@@ -26,18 +26,13 @@ const RegisterScreen = ({ navigation }) => {
     }
   }, [error]);
 
-  const img = SampleImages[16];
+  const img = SampleImages[7];
 
   return (
     <ImageBackground source={img} style={CommonStyles.container}>
       <SafeAreaView style={CommonStyles.container}>
         <UserForm onSubmit={onSubmit} loading={loading} />
         <Spacer />
-        <LinkButton
-          text="Already have an account? Log in"
-          onPress={() => navigation.navigate('Signin')}
-          color={Colors.lightFont}
-        />
       </SafeAreaView>
     </ImageBackground>
   );

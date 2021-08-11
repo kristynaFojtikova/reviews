@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import Colors from '../styles/Colors';
+import Colors from '../../styles/Colors';
 
 const StarsRow = ({ rating, setRating, color = Colors.darkFont, disabled, small }) => {
   const stars = Array.from({ length: 5 }, (_, index) => (

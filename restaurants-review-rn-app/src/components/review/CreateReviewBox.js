@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
-import Colors from '../styles/Colors';
-import Button from './util/Button';
-import FormInput from './form/FormInput';
-import StarsRow from './StarsRow';
-import { useRestaurantContext } from '../context/RestaurantContext';
+import Colors from '../../styles/Colors';
+import Button from '../util/Button';
+import FormInput from '../form/FormInput';
+import StarsRow from '../util/StarsRow';
+import { useRestaurantContext } from '../../context/RestaurantContext';
 
 const CreateReviewBox = () => {
   const { createReview, createReviewLoading } = useRestaurantContext();

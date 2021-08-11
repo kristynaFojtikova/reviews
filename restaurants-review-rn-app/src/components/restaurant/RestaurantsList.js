@@ -1,27 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, FlatList } from 'react-native';
 
-import StarsRow from './StarsRow';
-import CommonStyles from '../styles/CommonStyles';
-import Colors from '../styles/Colors';
+import StarsRow from '../util/StarsRow';
+import CommonStyles from '../../styles/CommonStyles';
+import Colors from '../../styles/Colors';
 import RestaurantCell from './RestaurantCell';
 
 const RestaurantsList = React.memo(
   ({ starFilter, setStarFilter, loading, restaurants, onRefresh, onSelectItem }) => {
-    const renderItem = ({ item }) => {
-      return <RestaurantCell item={item} onPress={() => onSelectItem(item.id)} />;
-    };
+    const renderItem = ({ item }) => (
+      <RestaurantCell item={item} onPress={() => onSelectItem(item.id)} />
+    );
 
     return (
       <FlatList
-        ListHeaderComponent={() => {
-          return (
-            <View style={CommonStyles.contentContainer}>
-              <Text style={styles.label}>{'Filter by rating'}</Text>
-              <StarsRow rating={starFilter} setRating={setStarFilter} />
-            </View>
-          );
-        }}
+        ListHeaderComponent={() => (
+          <View style={CommonStyles.contentContainer}>
+            <Text style={styles.label}>FILTER BY RATING:</Text>
+            <StarsRow rating={starFilter} setRating={setStarFilter} />
+          </View>
+        )}
         loading={loading}
         data={restaurants}
         renderItem={renderItem}

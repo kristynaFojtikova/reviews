@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import * as R from 'ramda';
 
-import { emailRegex, passwordRegex } from '../util/regex';
-import Form from './form/Form';
-import CheckmarkInput from './form/CheckmarkInput';
-import FormInput from './form/FormInput';
-import Button from './util/Button';
+import { withNavigation } from 'react-navigation';
+import { emailRegex, passwordRegex } from '../../util/regex';
+import Form from './Form';
+import CheckmarkInput from './CheckmarkInput';
+import FormInput from './FormInput';
+import LinkButton from '../util/LinkButton';
 
-const UserForm = ({ onSubmit, loading, admin }) => {
+const UserForm = ({ onSubmit, loading, admin, navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('CUSTOMER');
@@ -67,20 +68,28 @@ const UserForm = ({ onSubmit, loading, admin }) => {
   return (
     <Form
       headerText={admin ? 'Create a user' : 'Create an account'}
-      submitButtonText={'Create'}
+      submitButtonText="Create"
       buttonIcon="rowing"
       onSubmit={onSubmitPressed}
       loading={loading}
+      footer={() =>
+        admin ? null : (
+          <LinkButton
+            text="Already have an account? Log in"
+            onPress={() => navigation.navigate('Signin')}
+          />
+        )
+      }
     >
       <FormInput
-        label={'Email'}
+        label="Email"
         value={email}
         setValue={setEmail}
         error={emailError}
         validate={validateEmail}
       />
       <FormInput
-        label={'Password'}
+        label="Password"
         secureTextEntry
         value={password}
         setValue={setPassword}
@@ -105,4 +114,4 @@ const UserForm = ({ onSubmit, loading, admin }) => {
   );
 };
 
-export default UserForm;
+export default withNavigation(UserForm);

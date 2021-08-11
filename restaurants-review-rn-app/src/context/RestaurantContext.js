@@ -2,12 +2,12 @@ import React, { createContext, useEffect, useState, useMemo } from 'react';
 import { useMutation, useLazyQuery } from '@apollo/client';
 
 import RESTAURANT from '../graphql/queries/RESTAURANT';
-import CREATE_REVIEW from '../graphql/mutations/CREATE_REVIEW';
-import DELETE_RESTAURANT from '../graphql/mutations/DELETE_RESTAURANT';
-import APPROVE_REVIEW from '../graphql/mutations/APPROVE_REVIEW';
-import DELETE_REVIEW from '../graphql/mutations/DELETE_REVIEW';
 import CREATE_RESTAURANT from '../graphql/mutations/CREATE_RESTAURANT';
 import EDIT_RESTAURANT from '../graphql/mutations/EDIT_RESTAURANT';
+import DELETE_RESTAURANT from '../graphql/mutations/DELETE_RESTAURANT';
+import CREATE_REVIEW from '../graphql/mutations/CREATE_REVIEW';
+import APPROVE_REVIEW from '../graphql/mutations/APPROVE_REVIEW';
+import DELETE_REVIEW from '../graphql/mutations/DELETE_REVIEW';
 
 export const RestaurantContext = createContext();
 
