@@ -87,7 +87,7 @@ const LoginForm = ({ onSubmit, loading, navigation }) => {
           <LinkButton
             text="__DEV__: prefil to customer"
             onPress={() => {
-              setEmail('customer2@grr.la');
+              setEmail('customer5@grr.la');
               setPassword('Testing123!');
             }}
           />

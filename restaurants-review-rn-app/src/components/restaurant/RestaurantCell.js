@@ -10,6 +10,7 @@ const RestaurantCell = ({ item, onPress }) => {
   const { id, name, description, reviews } = item;
 
   const averageRating = getAverageRatingFor(item);
+  const pendingReviews = reviews.filter((review) => review.status === 'PENDING');
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
@@ -20,6 +21,9 @@ const RestaurantCell = ({ item, onPress }) => {
       <ImagesScroller id={id} />
       <View style={styles.bottomContentContainer}>
         <Text style={styles.description}>{description}</Text>
+        {pendingReviews && pendingReviews.length > 0 && (
+          <Text style={styles.pending}>Review pending approval</Text>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -44,6 +48,10 @@ const styles = StyleSheet.create({
   },
   description: {
     color: Colors.darkFont,
+    fontSize: 14,
+  },
+  pending: {
+    color: Colors.error,
     fontSize: 14,
   },
 });

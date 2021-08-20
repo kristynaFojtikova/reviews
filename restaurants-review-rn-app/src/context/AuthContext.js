@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const persistTokens = async ({ accessToken, refreshToken }) => {
-    console.log('SAVE TOKENS');
     await AsyncStorage.setItem('accessToken', accessToken);
     await AsyncStorage.setItem('refreshToken', refreshToken);
   };
@@ -75,10 +74,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const logout = async () => {
-    console.log('LOUGOUT');
     const refresh = await AsyncStorage.getItem('refreshToken');
-
-    console.log('refresh', refresh);
     logoutMutation({
       variables: {
         refreshToken: refresh,

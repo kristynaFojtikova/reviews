@@ -68,8 +68,12 @@ export const RestaurantProvider = ({ children }) => {
   });
 
   const [deleteReviewMutation, { loading: deleteReviewLoading }] = useMutation(DELETE_REVIEW, {
-    onError: setError,
-    onCompleted: () => setDeleteReviewSuccess(true),
+    onError: (error) => {
+      setError(error);
+    },
+    onCompleted: (data) => {
+      setDeleteReviewSuccess(true);
+    },
   });
 
   const createRestaurant = ({ name, description }) => {
