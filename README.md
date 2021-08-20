@@ -1,12 +1,14 @@
 # Restaurant Review
 
-## Folder structure
+## Project Setup & Folder structure
 
-`server` folder in `root` contains the node server, that serves app data from it's sqlLite db using graphql.
+`server` folder in root contains the node server, that serves app data from it's sqlLite db using graphql.
 
-`restaurants-review-rn-app` folder in `root` contains the RN app codebase.
+`restaurants-review-rn-app` folder in root contains the RN app codebase.
 
 `insomnia` folder in `root` contains the json file for Insomnia workspace to test the server.
+
+The React Native app uses context for state management, and graphQL client for making network calls to the server.
 
 ## Run & Setup
 
