@@ -3,14 +3,12 @@ import { SafeAreaView, Alert, ImageBackground } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import UserForm from '../components/form/UserForm';
-import LinkButton from '../components/util/LinkButton';
 import Spacer from '../components/util/Spacer';
 import SampleImages from '../util/sampleImages';
-import Colors from '../styles/Colors';
 import { useAuthContext } from '../context/AuthContext';
 import CommonStyles from '../styles/CommonStyles';
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = () => {
   const { register, registerLoading: loading, error, setError } = useAuthContext();
 
   const onSubmit = ({ email, password, role }) => {

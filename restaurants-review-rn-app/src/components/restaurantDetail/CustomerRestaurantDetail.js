@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import * as R from 'ramda';
 
 import StarsRow from '../util/StarsRow';
 import ReviewCell from '../review/ReviewCell';

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import * as R from 'ramda';
 
 import { withNavigation } from 'react-navigation';
 import { emailRegex, passwordRegex } from '../../util/regex';

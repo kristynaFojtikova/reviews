@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import * as R from 'ramda';
 
-import { nameRegex, descriptionRegex } from '../../util/regex';
 import Form from './Form';
-import CheckmarkInput from './CheckmarkInput';
 import FormInput from './FormInput';
-import Button from '../util/Button';
 
 const RestaurantForm = ({ onSubmit, loading, item }) => {
   const [name, setName] = useState(R.prop('name', item) || `John's`);

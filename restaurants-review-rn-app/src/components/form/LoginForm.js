@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { withNavigation } from 'react-navigation';
 import { emailRegex } from '../../util/regex';
 import Form from './Form';

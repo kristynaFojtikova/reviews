@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
+import React, { useState, useMemo } from 'react';
+import { useMutation, useLazyQuery } from '@apollo/client';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import { navigate } from '../util/navigationRef';

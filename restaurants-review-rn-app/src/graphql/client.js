@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  gql,
-  createHttpLink,
-  ApolloConsumer,
-  createNetworkInterface,
-} from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink, ApolloConsumer } from '@apollo/client';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { setContext } from '@apollo/client/link/context';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, Text, Alert } from 'react-native';
+import { StyleSheet, SafeAreaView, Text } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import * as R from 'ramda';
 
@@ -10,7 +10,7 @@ import { useAuthContext } from '../context/AuthContext';
 
 import { clearApolloStore } from '../graphql/client';
 
-const AccountScreen = ({ navigation }) => {
+const AccountScreen = () => {
   const { user, logout, logoutLoading, error, setError } = useAuthContext();
 
   const onLogout = () => {
